@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+@import "tailwindcss";
+
+/* ─── THEME TOKENS ──────────────────────────────────────────────────────────── */
+:root {
+  --bg-primary:    #0b0f18;
+  --bg-secondary:  #080c14;
+  --bg-card:       #12161f;
+  --bg-input:      #0b0e14;
+
+  --text-primary:  #ffffff;
+  --text-muted:    #7E8A9E;
+  --text-faint:    #4b5563; /* gray-600 */
+
+  --border-color:  #1f2937; /* gray-800 */
+  --border-subtle: #161b22;
+
+  --accent:        #00E572;
+  --accent-dim:    rgba(0,229,114,0.10);
+  --accent-border: rgba(0,229,114,0.30);
+}
+
+:root.light {
+  --bg-primary:    #f0f4f8;
+  --bg-secondary:  #e4eaf2;
+  --bg-card:       #ffffff;
+  --bg-input:      #f8fafc;
+
+  --text-primary:  #0d1117;
+  --text-muted:    #4b5563;
+  --text-faint:    #9ca3af;
+
+  --border-color:  #d1d5db;
+  --border-subtle: #e5e7eb;
+
+  --accent:        #00b359;
+  --accent-dim:    rgba(0,179,89,0.10);
+  --accent-border: rgba(0,179,89,0.35);
+}
+
+/* ─── BASE ──────────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    background: linear-gradient(to bottom, var(--bg-primary), var(--bg-secondary));
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  nav {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  footer {
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-subtle);
+  }
+}
+
+/* ─── UTILITIES ─────────────────────────────────────────────────────────────── */
+@layer utilities {
+  .text-neon-green  { color: var(--accent); }
+  .bg-neon-green    { background-color: var(--accent); }
+  .border-neon-green { border-color: var(--accent); }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Theme-aware shortcuts used in components */
+  .theme-bg-primary   { background-color: var(--bg-primary); }
+  .theme-bg-secondary { background-color: var(--bg-secondary); }
+  .theme-bg-card      { background-color: var(--bg-card); }
+  .theme-bg-input     { background-color: var(--bg-input); }
+  .theme-text         { color: var(--text-primary); }
+  .theme-text-muted   { color: var(--text-muted); }
+  .theme-text-faint   { color: var(--text-faint); }
+  .theme-border       { border-color: var(--border-color); }
+  .theme-border-subtle { border-color: var(--border-subtle); }
+  .theme-accent       { color: var(--accent); }
+  .theme-accent-bg    { background-color: var(--accent-dim); }
+  .theme-accent-border { border-color: var(--accent-border); }
+}
+
+/* ─── RESPONSIVE ZOOM ────────────────────────────────────────────────────────── */
+@media (max-width: 1280px) { body { zoom: 0.9; } }
+@media (max-width: 1024px) { body { zoom: 0.85; } }
+@media (max-height: 850px) and (min-width: 1024px) { body { zoom: 0.85; } }
+@media (max-height: 750px) and (min-width: 1024px) { body { zoom: 0.75; } }
+@media (max-width: 768px)  { body { zoom: 0.8; } header { padding: 12px 16px; } }
+@media (max-width: 480px)  { body { zoom: 0.7; } }
