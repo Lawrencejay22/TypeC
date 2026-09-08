@@ -109,15 +109,148 @@ npm run lint
 
 ## Game Flow
 
+```mermaid
+flowchart TD
+    START([🚀 App Start]) --> SESSION{Session\nstorage\nview?}
+
+    SESSION -- "login / empty" --> LOGIN
+    SESSION -- "transient view\ne.g. game/results" --> HOME
+
+    %% ── Auth ──────────────────────────────────────────────
+    LOGIN["🔐 Login\n─────────────────\n• Sign In\n• Sign Up\n• Play as Guest\n• OAuth: GitHub / Google"]
+
+    LOGIN -- "Auth Success /" --> WELCOME["✅ Welcome\n─────────────────\nAuthentication animation\n+ loading bar (auto-advance)"]
+    WELCOME -- "onComplete" --> HOME
+
+    %% ── Home ──────────────────────────────────────────────
+    HOME["🏠 Home / SelectMode\n─────────────────\nFilter: All / Easy / Medium / Hard\nLanguages per tier:\n• EASY   → HTML · CSS · JS\n• MEDIUM → TS · Python · SQL & Rust\n• HARD   → Go · C++ · Regex\n+ RANDOM (all langs mixed)"]
+
+    HOME -- "Pick language\nor RANDOM" --> MODESELECT
+
+    %% ── Mode Select ───────────────────────────────────────
+    MODESELECT["🎮 ModeSelect\n─────────────────\n• Practice Mode (FREE)\n  Unlimited retries, no rank impact\n• Serious Mode (RANKED)\n  Score submitted to leaderboard"]
+
+    MODESELECT -- "onSelect(style)" --> BRIEFING
+    MODESELECT -- "onBack" --> HOME
+
+    %% ── Mission Briefing ──────────────────────────────────
+    BRIEFING["📋 Mission Briefing\n─────────────────\nPer-language details:\n• Objective  • Notes\n• Difficulty  • WPM target\n• Duration   • Accuracy req"]
+
+    BRIEFING -- "START SESSION →" --> PRELAUNCH
+    BRIEFING -- "← BACK" --> MODESELECT
+
+    %% ── Pre-Launch ────────────────────────────────────────
+    PRELAUNCH["🛸 Pre-Launch\n─────────────────\nLanguage tagline + description\n↑ LAUNCH button →\n3 … 2 … 1 … GO!"]
+
+    PRELAUNCH -- "onLaunch (after countdown)" --> GAME
+    PRELAUNCH -- "← BACK" --> BRIEFING
+
+    %% ── Typing Game ───────────────────────────────────────
+    GAME["🎯 Typing Game\n─────────────────\nAliens fall with code snippets\nType to target → laser fires\nLive HUD: WPM · Accuracy · Score\nHealth: ❤❤❤\nTimer: 90 sec\nPause / Resume / Exit"]
+
+    GAME -- "Timer hits 0\nor Health = 0" --> RESULTS
+    GAME -- "EXIT button" --> HOME
+
+    %% ── Results ───────────────────────────────────────────
+    RESULTS["🏆 Game Results\n─────────────────\nAnimated stats:\n• WPM  • Accuracy\n• Score  • Time Elapsed\n• Enemies Defeated  • Rank (S–D)"]
+
+    RESULTS -- "RETRY ↺" --> PRELAUNCH
+    RESULTS -- "← BACK TO MISSION SELECT" --> HOME
+    RESULTS -- "[ LEADERBOARD ]\n(Ranked mode only)" --> HOME
+
+    %% ── Header Nav (any non-game view) ────────────────────
+    HEADER["🔧 Header\n─────────────────\nTheme toggle · Sign Out\nNav: Home · Leaderboard\nProfile · About · Contact\nUpdate & Logs"]
+
+    HOME -. "always visible\nexcept in game" .-> HEADER
+    HEADER -. "onSignOut" .-> LOGIN
+
+    %% ── Styles ────────────────────────────────────────────
+    style START    fill:#00E572,color:#04070e,stroke:none
+    style LOGIN    fill:#1a1f2e,color:#e2e8f0,stroke:#334155
+    style WELCOME  fill:#1a1f2e,color:#e2e8f0,stroke:#334155
+    style HOME     fill:#1a1f2e,color:#e2e8f0,stroke:#334155
+    style MODESELECT fill:#1a1f2e,color:#e2e8f0,stroke:#334155
+    style BRIEFING fill:#1a1f2e,color:#e2e8f0,stroke:#334155
+    style PRELAUNCH fill:#1a1f2e,color:#e2e8f0,stroke:#334155
+    style GAME     fill:#04070e,color:#e2e8f0,stroke:#00E572
+    style RESULTS  fill:#1a1f2e,color:#e2e8f0,stroke:#334155
+    style HEADER   fill:#0f1420,color:#94a3b8,stroke:#1e293b,stroke-dasharray:5 5
+    style SESSION  fill:#0f1420,color:#94a3b8,stroke:#334155
 ```
-Login → Welcome → Home
-                   └─ Select Mode (HTML / CSS / JS)
-                         └─ Select Play Style
-                               └─ Mission Briefing
-                                     └─ Pre-Launch Countdown
-                                           └─ Typing Game
-                                                 └─ Results (Retry / Back to Home / Leaderboard)
-```
+
+---
+
+## Roadmap
+
+### v1.0 — Core Game ✅ Done
+The full single-player game loop is implemented and working.
+
+| Feature | Status |
+|---------|--------|
+| Login / Sign Up / Guest / OAuth UI | ✅ |
+| Welcome animation screen | ✅ |
+| Mode select (9 languages + Random, 3 tiers) | ✅ |
+| Play style picker (Practice / Ranked) | ✅ |
+| Mission briefing per language | ✅ |
+| Pre-launch countdown | ✅ |
+| Typing game engine (aliens, laser, HUD) | ✅ |
+| Game results with animated stats + rank | ✅ |
+| Dark / Light theme toggle | ✅ |
+| Header navigation (auth / unauth) | ✅ |
+
+---
+
+### v1.1 — Content Pages 🚧 In Progress
+These views are linked from the header but are currently empty files.
+
+| Feature | Status |
+|---------|--------|
+| Profile page — player stats, match history, badges (`profile.jsx`) | 🚧 Empty |
+| Leaderboard page (`leaderboard.jsx`) | 🚧 Empty |
+| About page (`about.jsx`) | 🚧 Empty |
+| Contact page (`contact.jsx`) | 🚧 Empty |
+| Updates & Logs page (`update&logs.jsx`) | 🚧 Empty |
+
+---
+
+### v1.2 — Backend & Auth 🔲 Planned
+The server folder exists but is empty. All auth and data is currently frontend-only.
+
+| Feature | Status |
+|---------|--------|
+| Express / Fastify server setup | 🔲 |
+| Real user authentication (JWT / sessions) | 🔲 |
+| User registration & login API | 🔲 |
+| Persist game stats to database | 🔲 |
+| Leaderboard API (global rankings) | 🔲 |
+| User profile API (stats history) | 🔲 |
+| OAuth integration (GitHub / Google) | 🔲 |
+
+---
+
+### v1.3 — Multiplayer 🔲 Planned
+The header already links to a `multiplayer` route — the feature is planned but not started.
+
+| Feature | Status |
+|---------|--------|
+| Competitive 1v1 matchmaking | 🔲 |
+| Real-time race (WebSockets) | 🔲 |
+| Ranked match scoring system | 🔲 |
+| Match history & replays | 🔲 |
+
+---
+
+### v1.4 — Advanced Stats & UX 🔲 Planned
+
+| Feature | Status |
+|---------|--------|
+| Per-finger latency metrics | 🔲 |
+| Mistake heatmap (keyboard layout) | 🔲 |
+| WPM progress graph over time | 🔲 |
+| Custom keybindings | 🔲 |
+| Mechanical switch audio themes | 🔲 |
+| Mobile / touch support | 🔲 |
+| Docs page | 🔲 |
 
 ---
 
