@@ -11,7 +11,6 @@ import PreLaunch from './assets/PreLaunch.jsx'
 import TypingGame from './assets/TypingGame.jsx'
 import GameResults from './assets/GameResults.jsx'
 
-// Views that should never be restored on page refresh
 const TRANSIENT_VIEWS = new Set(['welcome', 'modeselect', 'briefing', 'prelaunch', 'game', 'results']);
 
 export default function App() {
@@ -28,7 +27,6 @@ export default function App() {
     return sessionStorage.getItem('typec_theme') === 'light';
   });
 
-  // Apply saved theme on mount
   useEffect(() => {
     if (isLight) document.documentElement.classList.add('light');
   }, []);
@@ -37,8 +35,7 @@ export default function App() {
     sessionStorage.setItem('typec_view', view);
     setCurrentView(view);
   };
-
-  // ── Auth ──────────────────────────────────────────────────────────────────
+  
   const handleLoginSuccess    = () => navigate('welcome');
   const handleWelcomeComplete = () => navigate('home');
   const handleSignOut = () => {
@@ -46,41 +43,31 @@ export default function App() {
     setCurrentView('login');
   };
 
-  // ── Game flow ─────────────────────────────────────────────────────────────
-  // 1. Card → Mode Select
   const handleStartPractice = (mode) => {
     setSelectedMode(mode);
     navigate('modeselect');
   };
-
-  // 2. Mode Select → Mission Briefing
+  
   const handlePlayStyleSelect = (style) => {
     setSelectedPlayStyle(style);
     navigate('briefing');
   };
 
-  // 3. Briefing → Pre-Launch
   const handleBriefingStart = () => navigate('prelaunch');
 
-  // 4. Pre-Launch → Typing Game
   const handleLaunch = () => navigate('game');
 
-  // 5. Game over → Results
   const handleGameOver = (stats) => {
     setGameStats(stats);
     navigate('results');
   };
 
-  // 6a. Retry → back to Pre-Launch (fresh game, same mode/style)
   const handleRetry = () => navigate('prelaunch');
 
-  // 6b. Back to select → home
   const handleBackToSelect = () => navigate('home');
 
-  // 6c. Leaderboard (future)
   const handleLeaderboard = () => navigate('home');
 
-  // ── Theme ─────────────────────────────────────────────────────────────────
   const handleThemeToggle = () => {
     const next = !isLight;
     setIsLight(next);
