@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const LANG_COLOR = {
     HTML: '#f97316', CSS: '#3b82f6', JAVASCRIPT: '#facc15',
@@ -13,7 +13,6 @@ const RANK_STYLES = {
     'D-TIER': { color: '#ef4444',  label: 'D-TIER', glow: 'rgba(239,68,68,0.25)' },
 };
 
-// Animated counter hook
 function useCounter(target, duration = 1200) {
     const [val, setVal] = useState(0);
     useEffect(() => {
@@ -54,7 +53,6 @@ export default function GameResults({ stats, onRetry, onBackToSelect, onLeaderbo
     const color      = LANG_COLOR[mode] || '#00E572';
     const rankStyle  = RANK_STYLES[rank] || RANK_STYLES['D-TIER'];
 
-    // Animated values
     const animWpm      = useCounter(wpm,      1000);
     const animAcc      = useCounter(accuracy, 1200);
     const animScore    = useCounter(score,    1400);
@@ -63,7 +61,6 @@ export default function GameResults({ stats, onRetry, onBackToSelect, onLeaderbo
     const minutes = Math.floor(timeElapsed / 60);
     const secs    = String(timeElapsed % 60).padStart(2, '0');
 
-    // Performance message
     const message = wpm >= 90 ? 'FLAWLESS EXECUTION.' :
                     wpm >= 70 ? 'MISSION ACCOMPLISHED.' :
                     wpm >= 50 ? 'SOLID PERFORMANCE.' :
@@ -73,7 +70,6 @@ export default function GameResults({ stats, onRetry, onBackToSelect, onLeaderbo
     return (
         <div className="w-full max-w-3xl mx-auto animate-in fade-in duration-700">
 
-            {/* Breadcrumb */}
             <div className="font-mono text-[10px] tracking-widest mb-6 flex items-center gap-2" style={{ color: 'var(--text-faint)' }}>
                 <span>// MISSION COMPLETE</span>
                 <span>—</span>
@@ -87,7 +83,6 @@ export default function GameResults({ stats, onRetry, onBackToSelect, onLeaderbo
                 </span>
             </div>
 
-            {/* Title */}
             <div className="text-center mb-10">
                 <div className="font-mono text-xs tracking-widest mb-3" style={{ color: 'var(--text-faint)' }}>
                     // MISSION COMPLETED — {mode}
@@ -100,7 +95,6 @@ export default function GameResults({ stats, onRetry, onBackToSelect, onLeaderbo
                 </p>
             </div>
 
-            {/* Top two big stats */}
             <div className="grid grid-cols-2 gap-4 mb-4">
                 <div
                     className="rounded-xl p-8 flex flex-col items-center justify-center text-center"
@@ -133,7 +127,6 @@ export default function GameResults({ stats, onRetry, onBackToSelect, onLeaderbo
                 </div>
             </div>
 
-            {/* Bottom stats row */}
             <div className="grid grid-cols-4 gap-4 mb-8">
                 <StatCard label="TOTAL SCORE"     value={animScore.toLocaleString()} />
                 <StatCard label="TIME ELAPSED"    value={`${minutes}:${secs}`} />
@@ -155,7 +148,6 @@ export default function GameResults({ stats, onRetry, onBackToSelect, onLeaderbo
                 </div>
             </div>
 
-            {/* CTA buttons */}
             <div className="flex items-center justify-center gap-4 mb-6">
                 <button
                     onClick={onRetry}
@@ -175,7 +167,6 @@ export default function GameResults({ stats, onRetry, onBackToSelect, onLeaderbo
                 )}
             </div>
 
-            {/* Back link */}
             <div className="text-center">
                 <button
                     onClick={onBackToSelect}
@@ -186,7 +177,6 @@ export default function GameResults({ stats, onRetry, onBackToSelect, onLeaderbo
                 </button>
             </div>
 
-            {/* Footer */}
             <div className="flex justify-between items-center mt-10 font-mono text-[10px] tracking-widest" style={{ color: 'var(--text-faint)' }}>
                 <span>GLOBAL_GL_2061 • {mode} • {playStyle?.toUpperCase()}</span>
                 <div className="flex items-center gap-3">

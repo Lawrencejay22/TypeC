@@ -1,5 +1,23 @@
 import { useState } from "react";
 
+function EyeOpen() {
+    return (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+    );
+}
+
+function EyeOff() {
+    return (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.05 10.05 0 015.058-5.058m1.277-1.277A10.05 10.05 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.05 10.05 0 01-1.277 3.522M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3l18 18" />
+        </svg>
+    );
+}
+
 export default function Login({ onLoginSuccess }) {
     const [checkbox,            setCheckbox]            = useState(false);
     const [showPassword,        setShowPassword]        = useState(false);
@@ -13,26 +31,11 @@ export default function Login({ onLoginSuccess }) {
     };
     const inputClass = "w-full rounded px-4 py-3.5 focus:outline-none transition-colors placeholder:opacity-30 text-sm";
 
-    const EyeOpen = () => (
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-        </svg>
-    );
-    const EyeOff = () => (
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.05 10.05 0 015.058-5.058m1.277-1.277A10.05 10.05 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.05 10.05 0 01-1.277 3.522M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3l18 18" />
-        </svg>
-    );
-
     return (
         <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center gap-12 lg:gap-24">
 
-            {/* ── Left column ── */}
             <div className="flex flex-col gap-6 max-w-xl">
 
-                {/* Badge + headline */}
                 <div>
                     <div
                         className="inline-flex items-center gap-2 rounded px-3 py-1 mb-4 text-[10px] font-mono tracking-widest"
@@ -68,7 +71,6 @@ export default function Login({ onLoginSuccess }) {
                     ))}
                 </ul>
 
-                {/* Stats row */}
                 <div className="flex gap-12 mt-6 pt-8" style={{ borderTop: '1px solid var(--border-color)' }}>
                     <div>
                         <div className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>84,210</div>
@@ -88,12 +90,10 @@ export default function Login({ onLoginSuccess }) {
                 </div>
             </div>
 
-            {/* ── Right column: form card ── */}
             <div
                 className="rounded-xl p-6 lg:p-8 w-full max-w-[420px] shadow-2xl"
                 style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
             >
-                {/* Tabs */}
                 <div className="flex font-mono text-xs tracking-widest mb-6">
                     {[{ label: 'SIGN IN', val: true }, { label: 'SIGN UP', val: false }].map(({ label, val }) => (
                         <div
@@ -111,7 +111,6 @@ export default function Login({ onLoginSuccess }) {
                     ))}
                 </div>
 
-                {/* Card header */}
                 <div className="mb-6">
                     <div className="flex justify-between items-center">
                         <h2 className="text-lg font-bold flex items-center gap-3 tracking-widest uppercase" style={{ color: 'var(--text-primary)' }}>
@@ -129,7 +128,6 @@ export default function Login({ onLoginSuccess }) {
                     </p>
                 </div>
 
-                {/* Form */}
                 <form className="space-y-4 font-mono text-[11px]">
 
                     {!isLogin && (
@@ -151,7 +149,6 @@ export default function Login({ onLoginSuccess }) {
                         />
                     </div>
 
-                    {/* Password */}
                     <div className="space-y-2">
                         <div className="flex justify-between items-center">
                             <label className="block tracking-widest" style={{ color: 'var(--text-muted)' }}>{'>'} PASSWORD</label>
@@ -185,7 +182,6 @@ export default function Login({ onLoginSuccess }) {
                         )}
                     </div>
 
-                    {/* Confirm password */}
                     {!isLogin && (
                         <div className="space-y-2">
                             <label className="block tracking-widest" style={{ color: 'var(--text-muted)' }}>{'>'} CONFIRM_PASSWORD</label>
@@ -208,18 +204,17 @@ export default function Login({ onLoginSuccess }) {
                         </div>
                     )}
 
-                    {/* Remember / terms */}
                     <div className="flex justify-between items-center text-[10px] py-1" style={{ color: 'var(--text-faint)' }}>
                         <label className="flex items-center gap-2 cursor-pointer" onClick={() => setCheckbox(!checkbox)}>
                             <div
                                 className="w-3.5 h-3.5 rounded-sm flex items-center justify-center transition-colors"
                                 style={checkbox
-                                    ? { backgroundColor: 'var(--accent)' }
+                                    ? { backgroundColor: '#2de06a', border: '1px solid #2de06a' }
                                     : { border: '1px solid var(--border-color)' }
                                 }
                             >
                                 {checkbox && (
-                                    <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="var(--bg-primary)">
+                                    <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="#ffffff">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
                                     </svg>
                                 )}
@@ -236,12 +231,10 @@ export default function Login({ onLoginSuccess }) {
                         <span className="tracking-widest">256-BIT ENCRYPTED</span>
                     </div>
 
-                    {/* Primary CTA */}
                     <button
                         type="button"
                         onClick={onLoginSuccess}
-                        className="w-full font-bold text-xs py-3.5 rounded tracking-widest mt-4 transition-colors"
-                        style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
+                        className="tc-arena-btn w-full font-bold text-xs py-3.5 rounded tracking-widest mt-4"
                     >
                         {isLogin ? 'ENTER ARENA →' : 'JOIN THE ARENA →'}
                     </button>
@@ -262,7 +255,6 @@ export default function Login({ onLoginSuccess }) {
                         </>
                     )}
 
-                    {/* Divider */}
                     <div className="flex items-center gap-4 py-1 mt-4">
                         <div className="h-px flex-1" style={{ backgroundColor: 'var(--border-color)' }} />
                         <span className="text-[10px] tracking-widest" style={{ color: 'var(--text-faint)' }}>
@@ -271,7 +263,6 @@ export default function Login({ onLoginSuccess }) {
                         <div className="h-px flex-1" style={{ backgroundColor: 'var(--border-color)' }} />
                     </div>
 
-                    {/* OAuth buttons */}
                     <div className="flex gap-4">
                         <button
                             type="button"

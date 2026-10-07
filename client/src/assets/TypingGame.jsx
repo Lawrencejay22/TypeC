@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 
-// ─── Snippet banks ────────────────────────────────────────────────────────────
 const SNIPPETS = {
     HTML: [
         '<div class="hero">','<section id="main">','<h1>Hello World</h1>',
@@ -197,7 +196,6 @@ function makeAlien(id, snippet, arenaW, lang) {
     };
 }
 
-// ─── Laser ────────────────────────────────────────────────────────────────────
 function Laser({ from, to, color }) {
     if (!from || !to) return null;
     return (
@@ -211,7 +209,6 @@ function Laser({ from, to, color }) {
     );
 }
 
-// ─── Per-language alien SVGs ──────────────────────────────────────────────────
 function AlienSVG({ lang, color, size = 40 }) {
     const c = color;
     const s = size;
@@ -303,7 +300,6 @@ function AlienSVG({ lang, color, size = 40 }) {
                 </svg>
             );
         case 'GO':
-            // Gopher-inspired: round head, big eyes, stubby arms
             return (
                 <svg width={s} height={s} viewBox="0 0 24 24" fill="none">
                     <ellipse cx="12" cy="11" rx="8" ry="7" fill={c} opacity="0.9"/>
@@ -320,7 +316,6 @@ function AlienSVG({ lang, color, size = 40 }) {
                 </svg>
             );
         case 'C++':
-            // Angular mech-bot with plus-sign eyes
             return (
                 <svg width={s} height={s} viewBox="0 0 24 24" fill="none">
                     <rect x="4"  y="5"  width="16" height="14" rx="1" fill={c} opacity="0.9"/>
@@ -329,7 +324,6 @@ function AlienSVG({ lang, color, size = 40 }) {
                     <rect x="7"  y="18" width="3"  height="5"  rx="1" fill={c} opacity="0.55"/>
                     <rect x="14" y="18" width="3"  height="5"  rx="1" fill={c} opacity="0.55"/>
                     <rect x="5"  y="2"  width="14" height="4"  rx="1" fill={c} opacity="0.7"/>
-                    {/* + eyes */}
                     <rect x="7"  y="10" width="3" height="1" fill="#04070e"/>
                     <rect x="8"  y="9"  width="1" height="3" fill="#04070e"/>
                     <rect x="14" y="10" width="3" height="1" fill="#04070e"/>
@@ -338,7 +332,6 @@ function AlienSVG({ lang, color, size = 40 }) {
                 </svg>
             );
         case 'REGEX':
-            // Swirly tentacle creature
             return (
                 <svg width={s} height={s} viewBox="0 0 24 24" fill="none">
                     <ellipse cx="12" cy="9" rx="7" ry="6" fill={c} opacity="0.9"/>
@@ -347,7 +340,6 @@ function AlienSVG({ lang, color, size = 40 }) {
                     <rect x="11" y="14" width="1.8" height="7" rx="0.9" fill={c} opacity="0.5"/>
                     <rect x="14" y="15" width="1.8" height="6" rx="0.9" fill={c} opacity="0.5"/>
                     <rect x="17" y="14" width="1.8" height="7" rx="0.9" fill={c} opacity="0.5"/>
-                    {/* ^ $ eyes like regex anchors */}
                     <circle cx="9"  cy="8.5" r="2" fill="#04070e"/>
                     <circle cx="15" cy="8.5" r="2" fill="#04070e"/>
                     <circle cx="9.7"  cy="7.8" r="0.7" fill={c} opacity="0.9"/>
@@ -366,7 +358,6 @@ function AlienSVG({ lang, color, size = 40 }) {
     }
 }
 
-// ─── Alien entity ─────────────────────────────────────────────────────────────
 function Alien({ alien, color, isTarget }) {
     const done      = alien.typed;
     const remaining = alien.snippet.slice(done.length);
@@ -403,7 +394,6 @@ function Alien({ alien, color, isTarget }) {
     );
 }
 
-// ─── Stars (stable, no re-render every frame) ─────────────────────────────────
 const Stars = React.memo(function Stars() {
     const stars = useMemo(() => Array.from({ length: 70 }, (_, i) => ({
         size: i % 6 === 0 ? 2 : 1,
@@ -430,15 +420,13 @@ const Stars = React.memo(function Stars() {
     );
 });
 
-// ─── Main game ────────────────────────────────────────────────────────────────
 const DURATION   = 90;
-const SHIP_FLOOR = 68; // px from bottom of arena
+const SHIP_FLOOR = 68;
 
 export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
     const color    = LANG_COLOR[mode] || '#00E572';
     const snippets = SNIPPETS[mode]   || SNIPPETS.HTML;
 
-    // ── refs ──────────────────────────────────────────────────────────────────
     const arenaRef       = useRef(null);
     const inputRef       = useRef(null);
     const frameRef       = useRef(null);
@@ -455,9 +443,8 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
     const timeRef        = useRef(DURATION);
     const gameOverCalled = useRef(false);
 
-    // ── state ─────────────────────────────────────────────────────────────────
     const [arenaW,     setArenaW]     = useState(window.innerWidth);
-    const [arenaH,     setArenaH]     = useState(window.innerHeight);
+    const [,           setArenaH]     = useState(window.innerHeight);
     const [aliens,     setAliens]     = useState([]);
     const [inputVal,   setInputVal]   = useState('');
     const [score,      setScore]      = useState(0);
@@ -470,7 +457,6 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
     const [laser,      setLaser]      = useState(null);
     const [shipX,      setShipX]      = useState(0);
 
-    // ── helpers ───────────────────────────────────────────────────────────────
     function getSnippet() {
         if (mode === 'RANDOM') {
             const lang = ALL_LANGUAGES[Math.floor(Math.random() * ALL_LANGUAGES.length)];
@@ -480,7 +466,6 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
         return { snippet: snippets[Math.floor(Math.random() * snippets.length)], lang: mode };
     }
 
-    // ── resize observer ───────────────────────────────────────────────────────
     useEffect(() => {
         const obs = new ResizeObserver(entries => {
             const { width, height } = entries[0].contentRect;
@@ -493,7 +478,6 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
         return () => obs.disconnect();
     }, []);
 
-    // ── spawn ─────────────────────────────────────────────────────────────────
     useEffect(() => {
         function spawnOne() {
             const { snippet, lang } = getSnippet();
@@ -509,7 +493,6 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // ── game loop ─────────────────────────────────────────────────────────────
     useEffect(() => {
         let last = performance.now();
         function tick(now) {
@@ -550,7 +533,6 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // ── timer ─────────────────────────────────────────────────────────────────
     useEffect(() => {
         const iv = setInterval(() => {
             if (pausedRef.current) return;
@@ -565,10 +547,8 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // ── autofocus ─────────────────────────────────────────────────────────────
     useEffect(() => { inputRef.current?.focus(); }, []);
 
-    // ── game over ─────────────────────────────────────────────────────────────
     const doGameOver = useCallback(() => {
         const elapsed = DURATION - timeRef.current;
         const wpm     = elapsed > 0 ? Math.round((totalRef.current / 5) / (elapsed / 60)) : 0;
@@ -588,7 +568,6 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
         });
     }, [mode, playStyle, onGameOver]);
 
-    // ── input handler ─────────────────────────────────────────────────────────
     function handleInput(e) {
         const val = e.target.value;
         setInputVal(val);
@@ -606,7 +585,6 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
             return;
         }
 
-        // Update typed progress
         alienRef.current = alienRef.current.map(a =>
             a.id === target.id ? { ...a, typed: val } : a
         );
@@ -615,7 +593,6 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
         setTotalTyped(totalRef.current);
         setShipX(target.x);
 
-        // Completed snippet
         if (val === target.snippet) {
             const shipY     = arenaHRef.current - SHIP_FLOOR;
             const shotColor = LANG_COLOR[target.lang] || color;
@@ -642,14 +619,12 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
         }
     }
 
-    // ── pause ─────────────────────────────────────────────────────────────────
     function togglePause() {
         pausedRef.current = !pausedRef.current;
         setPaused(pausedRef.current);
         if (!pausedRef.current) inputRef.current?.focus();
     }
 
-    // ── derived display values ────────────────────────────────────────────────
     const elapsed     = DURATION - timeLeft;
     const liveWpm     = elapsed > 5 ? Math.round((totalTyped / 5) / (elapsed / 60)) : 0;
     const accuracy    = totalTyped + errors > 0
@@ -658,7 +633,6 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
     const secs        = String(timeLeft % 60).padStart(2, '0');
     const shipCenterX = shipX || arenaW / 2;
 
-    // Active target for highlighting
     const activeTargetId = (() => {
         if (!inputVal) return null;
         const live = alienRef.current.filter(x => x.alive && !x.hit);
@@ -667,7 +641,6 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
             .sort((a, b) => b.y - a.y)[0]?.id ?? null;
     })();
 
-    // ── render ────────────────────────────────────────────────────────────────
     return (
         <div
             className="fixed inset-0 flex flex-col font-mono select-none"
@@ -749,7 +722,6 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                     style={{ bottom: SHIP_FLOOR - 10, backgroundColor: `${color}28` }}
                 />
 
-                {/* Aliens */}
                 {aliens.map(a => {
                     if (a.hit) return null;
                     const alienColor = LANG_COLOR[a.lang] || color;
@@ -777,21 +749,15 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                     }}
                 >
                     <svg width="42" height="48" viewBox="0 0 42 48" fill="none">
-                        {/* Engine glow */}
                         <ellipse cx="21" cy="45" rx="7" ry="3.5" fill={color} opacity="0.28"/>
-                        {/* Body */}
                         <path d="M21 2 L37 36 L21 30 L5 36 Z" fill={color} opacity="0.92"/>
-                        {/* Cockpit */}
                         <ellipse cx="21" cy="18" rx="6" ry="7" fill="#04070e" stroke={color} strokeWidth="1.5"/>
-                        {/* Wings */}
                         <path d="M5 36 L0 46 L14 40 Z"  fill={color} opacity="0.55"/>
                         <path d="M37 36 L42 46 L28 40 Z" fill={color} opacity="0.55"/>
-                        {/* Thruster */}
                         <ellipse cx="21" cy="45" rx="4" ry="2" fill={color} opacity="0.65"/>
                     </svg>
                 </div>
 
-                {/* Pause overlay */}
                 {paused && (
                     <div
                         className="absolute inset-0 flex flex-col items-center justify-center gap-6"
@@ -825,7 +791,6 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                 )}
             </div>
 
-            {/* ── Input bar ── */}
             <div
                 className="flex items-center gap-4 px-6 py-3.5 shrink-0"
                 style={{ backgroundColor: '#070b12', borderTop: `1px solid ${color}35` }}

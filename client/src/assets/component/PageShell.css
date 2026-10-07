@@ -1,0 +1,184 @@
+.tc-page {
+  --tc-green: #2de06a;
+  --tc-green-60: rgba(45, 224, 106, 0.6);
+  --tc-green-50: rgba(45, 224, 106, 0.5);
+  --tc-green-25: rgba(45, 224, 106, 0.25);
+  --tc-green-15: rgba(45, 224, 106, 0.15);
+  --tc-green-05: rgba(45, 224, 106, 0.05);
+  --tc-title: #ffffff;
+  --tc-text-70: rgba(255, 255, 255, 0.7);
+  --tc-text-55: rgba(255, 255, 255, 0.55);
+  --tc-text-50: rgba(255, 255, 255, 0.5);
+  --tc-text-45: rgba(255, 255, 255, 0.45);
+  --tc-text-40: rgba(255, 255, 255, 0.4);
+  --tc-text-35: rgba(255, 255, 255, 0.35);
+  --tc-text-30: rgba(255, 255, 255, 0.3);
+  --tc-text-25: rgba(255, 255, 255, 0.25);
+  --tc-text-20: rgba(255, 255, 255, 0.2);
+  --tc-line: rgba(255, 255, 255, 0.08);
+  --tc-line-soft: rgba(255, 255, 255, 0.05);
+  --tc-card: #111111;
+  --tc-card-dim: #0d0d0d;
+  --tc-panel: #0a0a0a;
+  --tc-panel-border: #2a2a2a;
+  --tc-box: #0e0e0e;
+  --tc-box-border: #2f2f2f;
+  --tc-box-head: #191919;
+  --tc-box-label: #809186;
+  --tc-box-muted: #7b7b7b;
+  --tc-track: rgba(255, 255, 255, 0.08);
+  --tc-chip: rgba(255, 255, 255, 0.08);
+
+  position: relative;
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  align-self: stretch;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--tc-title);
+}
+
+:root.light .tc-page {
+  --tc-green: #00a352;
+  --tc-green-60: rgba(0, 163, 82, 0.75);
+  --tc-green-50: rgba(0, 163, 82, 0.6);
+  --tc-green-25: rgba(0, 163, 82, 0.3);
+  --tc-green-15: rgba(0, 163, 82, 0.14);
+  --tc-green-05: rgba(0, 163, 82, 0.06);
+  --tc-title: #0a0a0a;
+  --tc-text-70: rgba(0, 0, 0, 0.78);
+  --tc-text-55: rgba(0, 0, 0, 0.66);
+  --tc-text-50: rgba(0, 0, 0, 0.62);
+  --tc-text-45: rgba(0, 0, 0, 0.58);
+  --tc-text-40: rgba(0, 0, 0, 0.55);
+  --tc-text-35: rgba(0, 0, 0, 0.52);
+  --tc-text-30: rgba(0, 0, 0, 0.45);
+  --tc-text-25: rgba(0, 0, 0, 0.4);
+  --tc-text-20: rgba(0, 0, 0, 0.35);
+  --tc-line: #d5d5d0;
+  --tc-line-soft: #e0e0db;
+  --tc-card: #eaeae5;
+  --tc-card-dim: #f0f0eb;
+  --tc-panel: #eeeeee;
+  --tc-panel-border: #5b5b5b;
+  --tc-box: #f5f5f5;
+  --tc-box-border: #5b5b5b;
+  --tc-box-head: #c8c8c8;
+  --tc-box-label: #6b7a70;
+  --tc-box-muted: #555555;
+  --tc-track: #d5d5d0;
+  --tc-chip: rgba(0, 0, 0, 0.07);
+}
+
+.tc-page > *:not(.matrix-bg) {
+  position: relative;
+  z-index: 1;
+}
+
+.tc-page-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 32px 40px 0;
+  border-bottom: 1px solid var(--tc-line);
+}
+
+.tc-page-label {
+  margin: 0;
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 1px;
+  color: var(--tc-green-60);
+}
+
+.tc-page-titlerow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+}
+
+.tc-page-title {
+  margin: 0;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 36px;
+  line-height: 40px;
+  text-transform: uppercase;
+  color: var(--tc-title);
+}
+
+.tc-page-back {
+  padding: 0 0 4px;
+  font: inherit;
+  font-size: 11px;
+  line-height: 16.5px;
+  letter-spacing: 1.1px;
+  color: var(--tc-text-30);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.tc-page-back:hover {
+  color: var(--tc-green);
+}
+
+.tc-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: -1px;
+}
+
+.tc-tab {
+  padding: 10px 24px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--tc-text-30);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.tc-tab:hover {
+  color: var(--tc-text-50);
+}
+
+.tc-tab.is-active {
+  color: var(--tc-green);
+  border-bottom-color: var(--tc-green);
+}
+
+.tc-page-body {
+  padding: 32px 40px;
+}
+
+.tc-page-note {
+  margin: 0 0 8px;
+  font-size: 11px;
+  line-height: 16.5px;
+  letter-spacing: 0.275px;
+  color: var(--tc-text-35);
+}
+
+@media (max-width: 720px) {
+  .tc-page-head {
+    padding: 24px 16px 0;
+  }
+
+  .tc-page-body {
+    padding: 24px 16px;
+  }
+
+  .tc-tab {
+    padding: 10px 14px;
+  }
+}

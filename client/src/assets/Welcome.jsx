@@ -1,21 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { SelectModeSkeleton } from './component/Skeleton.jsx';
 
 export default function Welcome({ onComplete }) {
     const [progress, setProgress] = useState(0);
+    const [ready, setReady] = useState(false);
 
     useEffect(() => {
+        let timeout;
         const interval = setInterval(() => {
             setProgress(p => {
                 if (p >= 100) {
                     clearInterval(interval);
-                    setTimeout(onComplete, 300);
+                    timeout = setTimeout(() => setReady(true), 300);
                     return 100;
                 }
                 return p + 2;
             });
         }, 30);
-        return () => clearInterval(interval);
-    }, [onComplete]);
+        return () => {
+            clearInterval(interval);
+            clearTimeout(timeout);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!ready) return;
+        const onKey = (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onComplete();
+            }
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [ready, onComplete]);
+
+    if (ready) {
+        return <SelectModeSkeleton onLaunch={onComplete} />;
+    }
 
     return (
         <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center text-center py-24 animate-in fade-in duration-700">

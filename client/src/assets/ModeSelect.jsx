@@ -1,10 +1,7 @@
-import React from 'react';
-
 export default function ModeSelect({ mode, onSelect, onBack }) {
     return (
         <div className="w-full max-w-4xl mx-auto animate-in fade-in duration-500">
 
-            {/* Top label */}
             <div className="font-mono text-xs tracking-widest mb-3" style={{ color: 'var(--accent)' }}>
                 // SELECT PLAY STYLE
             </div>
@@ -18,7 +15,6 @@ export default function ModeSelect({ mode, onSelect, onBack }) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
 
-                {/* Practice Card */}
                 <button
                     onClick={() => onSelect('practice')}
                     className="rounded-xl p-8 flex flex-col text-left gap-5 transition-all group"
@@ -26,7 +22,6 @@ export default function ModeSelect({ mode, onSelect, onBack }) {
                     onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.boxShadow = '0 0 24px var(--accent-dim)'; }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.boxShadow = 'none'; }}
                 >
-                    {/* Icon */}
                     <div
                         className="w-12 h-12 rounded-lg flex items-center justify-center font-mono font-bold text-lg"
                         style={{ backgroundColor: 'var(--accent-dim)', border: '1px solid var(--accent-border)', color: 'var(--accent)' }}
@@ -74,7 +69,6 @@ export default function ModeSelect({ mode, onSelect, onBack }) {
                     </div>
                 </button>
 
-                {/* Serious / Ranked Card */}
                 <button
                     onClick={() => onSelect('ranked')}
                     className="rounded-xl p-8 flex flex-col text-left gap-5 transition-all group"
@@ -82,7 +76,6 @@ export default function ModeSelect({ mode, onSelect, onBack }) {
                     onMouseEnter={e => { e.currentTarget.style.borderColor = '#eab308'; e.currentTarget.style.boxShadow = '0 0 24px rgba(234,179,8,0.12)'; }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.boxShadow = 'none'; }}
                 >
-                    {/* Icon */}
                     <div
                         className="w-12 h-12 rounded-lg flex items-center justify-center font-mono font-bold text-lg"
                         style={{ backgroundColor: 'rgba(234,179,8,0.10)', border: '1px solid rgba(234,179,8,0.30)', color: '#eab308' }}
@@ -131,7 +124,6 @@ export default function ModeSelect({ mode, onSelect, onBack }) {
                 </button>
             </div>
 
-            {/* Back */}
             <button
                 onClick={onBack}
                 className="font-mono text-xs tracking-widest px-6 py-3 rounded transition-colors"
