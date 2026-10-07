@@ -10,6 +10,13 @@ import MissionBriefing from './assets/MissionBriefing.jsx'
 import PreLaunch from './assets/PreLaunch.jsx'
 import TypingGame from './assets/TypingGame.jsx'
 import GameResults from './assets/GameResults.jsx'
+import Contact from './assets/contact.jsx'
+import About from './assets/about.jsx'
+import Leaderboard from './assets/leaderboard.jsx'
+import Profile from './assets/profile.jsx'
+import UpdatesLogs from './assets/update&logs.jsx'
+import Multiplayer from './assets/multiplayer.jsx'
+import { LoginSkeleton, SelectModeSkeleton } from './assets/component/Skeleton.jsx'
 
 const TRANSIENT_VIEWS = new Set(['welcome', 'modeselect', 'briefing', 'prelaunch', 'game', 'results']);
 
@@ -27,9 +34,18 @@ export default function App() {
     return sessionStorage.getItem('typec_theme') === 'light';
   });
 
+  const [fontsReady, setFontsReady] = useState(() => !document.fonts || document.fonts.status === 'loaded');
+
   useEffect(() => {
-    if (isLight) document.documentElement.classList.add('light');
-  }, []);
+    document.documentElement.classList.toggle('light', isLight);
+  }, [isLight]);
+
+  useEffect(() => {
+    if (fontsReady) return;
+    let alive = true;
+    document.fonts.ready.then(() => alive && setFontsReady(true));
+    return () => { alive = false; };
+  }, [fontsReady]);
 
   const navigate = (view) => {
     sessionStorage.setItem('typec_view', view);
@@ -66,12 +82,11 @@ export default function App() {
 
   const handleBackToSelect = () => navigate('home');
 
-  const handleLeaderboard = () => navigate('home');
+  const handleLeaderboard = () => navigate('leaderboard');
 
   const handleThemeToggle = () => {
     const next = !isLight;
     setIsLight(next);
-    document.documentElement.classList.toggle('light', next);
     sessionStorage.setItem('typec_theme', next ? 'light' : 'dark');
   };
 
@@ -91,9 +106,16 @@ export default function App() {
         />
       )}
       <main className={isGame ? 'flex-grow' : 'flex-grow flex items-center justify-center px-6 py-8 min-h-0'}>
-        {currentView === 'login'      && <Login onLoginSuccess={handleLoginSuccess} />}
+        {currentView === 'login'      && (fontsReady ? <Login onLoginSuccess={handleLoginSuccess} /> : <LoginSkeleton />)}
         {currentView === 'welcome'    && <Welcome onComplete={handleWelcomeComplete} />}
-        {currentView === 'home'       && <Home onStartPractice={handleStartPractice} />}
+        {currentView === 'home'       && (fontsReady ? <Home onStartPractice={handleStartPractice} /> : <SelectModeSkeleton />)}
+        {currentView === 'contact'    && <Contact />}
+        {currentView === 'about'      && <About />}
+        {currentView === 'leaderboard' && <Leaderboard onViewProfile={() => navigate('profile')} />}
+        {currentView === 'profile'    && <Profile onBack={() => navigate('home')} />}
+        {currentView === 'updates'    && <UpdatesLogs key="updates" initialTab="pack" onPlay={() => navigate('home')} />}
+        {currentView === 'docs'       && <UpdatesLogs key="docs" initialTab="help" onPlay={() => navigate('home')} />}
+        {currentView === 'multiplayer' && <Multiplayer onPractice={() => navigate('home')} />}
 
         {currentView === 'modeselect' && (
           <ModeSelect
@@ -138,7 +160,7 @@ export default function App() {
           />
         )}
       </main>
-      {!isGame && <Footer />}
+      {!isGame && <Footer onNavigate={navigate} />}
     </div>
   );
 }

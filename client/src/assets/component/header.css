@@ -1,0 +1,250 @@
+.tc-header {
+  --h-bg: rgba(15, 20, 28, 0.82);
+  --h-border: rgba(255, 255, 255, 0.08);
+  --h-brand: #ffffff;
+  --h-link: #a1a1aa;
+  --h-link-active: #ffffff;
+  --h-accent: #34d399;
+  --h-pill-bg: rgba(2, 44, 34, 0.4);
+  --h-pill-border: rgba(16, 185, 129, 0.2);
+  --h-btn-border: rgba(255, 255, 255, 0.1);
+  --h-btn-text: #a1a1aa;
+  --h-profile-bg: rgba(255, 255, 255, 0.02);
+  --h-profile-text: #d4d4d8;
+  --h-avatar-bg: #27272a;
+  --h-muted: #71717a;
+  --h-theme-icon: #a1a1aa;
+
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  height: 65px;
+  padding: 0 32px;
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--h-bg);
+  border-bottom: 1px solid var(--h-border);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+:root.light .tc-header {
+  --h-bg: rgba(255, 255, 255, 0.88);
+  --h-border: rgba(0, 0, 0, 0.08);
+  --h-brand: #0a0a0a;
+  --h-link: #71717a;
+  --h-link-active: #0a0a0a;
+  --h-accent: #10b981;
+  --h-pill-bg: #ecfdf5;
+  --h-pill-border: #a7f3d0;
+  --h-btn-border: #e4e4e7;
+  --h-btn-text: #3f3f46;
+  --h-profile-bg: #ffffff;
+  --h-profile-text: #27272a;
+  --h-avatar-bg: #e4e4e7;
+  --h-muted: #71717a;
+  --h-theme-icon: #eab308;
+}
+
+.tc-header button {
+  font: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.tc-header-left,
+.tc-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.tc-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tc-brand-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+}
+
+.tc-brand span {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0.8px;
+  color: var(--h-brand);
+}
+
+.tc-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin: 0;
+  padding: 0 0 0 32px;
+  list-style: none;
+}
+
+.tc-nav button {
+  padding-bottom: 4px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--h-link);
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease;
+}
+
+.tc-nav button:hover {
+  color: var(--h-link-active);
+}
+
+.tc-nav button.is-active {
+  font-weight: 500;
+  color: var(--h-link-active);
+  border-bottom-color: var(--h-accent);
+}
+
+.tc-online {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16.5px;
+  letter-spacing: -0.275px;
+  color: var(--h-accent);
+  background: var(--h-pill-bg);
+  border: 1px solid var(--h-pill-border);
+  border-radius: 9999px;
+}
+
+.tc-online-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--h-accent);
+}
+
+.tc-online-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--h-accent);
+  opacity: 0.75;
+  animation: tc-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes tc-ping {
+  75%, 100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.tc-header .tc-theme {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 16px;
+  padding: 5px 11px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--h-btn-text);
+  border: 1px solid var(--h-btn-border);
+  border-radius: 4px;
+  transition: border-color 0.15s ease;
+}
+
+.tc-theme-icon {
+  color: var(--h-theme-icon);
+}
+
+.tc-header .tc-theme:hover {
+  border-color: var(--h-accent);
+}
+
+.tc-divider {
+  width: 1px;
+  height: 16px;
+  margin-left: 16px;
+  background: var(--h-btn-border);
+}
+
+.tc-header .tc-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 16px;
+  padding: 5px 13px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--h-profile-text);
+  background: var(--h-profile-bg);
+  border: 1px solid var(--h-btn-border);
+  border-radius: 4px;
+  transition: border-color 0.15s ease;
+}
+
+.tc-header .tc-profile:hover,
+.tc-header .tc-profile.is-active {
+  border-color: var(--h-accent);
+}
+
+.tc-profile-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--h-btn-text);
+  background: var(--h-avatar-bg);
+  border-radius: 50%;
+}
+
+.tc-header .tc-signout {
+  margin-left: 8px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--h-muted);
+  transition: color 0.15s ease;
+}
+
+.tc-header .tc-signout:hover {
+  color: #ef4444;
+}
+
+@media (max-width: 900px) {
+  .tc-nav {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .tc-header {
+    padding: 0 16px;
+  }
+
+  .tc-online {
+    display: none;
+  }
+
+  .tc-header .tc-theme {
+    margin-left: 0;
+  }
+}

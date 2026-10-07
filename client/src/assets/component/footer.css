@@ -1,0 +1,90 @@
+.tc-footer {
+  --f-bg: rgba(13, 17, 23, 0.92);
+  --f-border: rgba(255, 255, 255, 0.08);
+  --f-strong: #a1a1aa;
+  --f-muted: #71717a;
+  --f-dot: #3f3f46;
+  --f-green: #34d399;
+  --f-green-dot: #10b981;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  width: 100%;
+  padding: 21px 32px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--f-muted);
+  background: var(--f-bg);
+  border-top: 1px solid var(--f-border);
+}
+
+:root.light .tc-footer {
+  --f-bg: rgba(255, 255, 255, 0.9);
+  --f-border: rgba(0, 0, 0, 0.08);
+  --f-strong: #3f3f46;
+  --f-muted: #71717a;
+  --f-dot: #d4d4d8;
+  --f-green: #059669;
+  --f-green-dot: #10b981;
+}
+
+.tc-footer-left,
+.tc-footer-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+}
+
+.tc-footer .is-strong {
+  font-weight: 500;
+  color: var(--f-strong);
+}
+
+.tc-footer-dot {
+  color: var(--f-dot);
+}
+
+.tc-footer a,
+.tc-footer button {
+  font: inherit;
+  color: var(--f-muted);
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.tc-footer a:hover,
+.tc-footer button:hover {
+  color: var(--f-green);
+}
+
+.tc-footer-latency {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tc-footer-latency-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--f-green-dot);
+}
+
+.tc-footer .is-green {
+  color: var(--f-green);
+}
+
+@media (max-width: 560px) {
+  .tc-footer {
+    padding: 16px;
+  }
+}

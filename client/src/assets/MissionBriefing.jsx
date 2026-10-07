@@ -1,5 +1,3 @@
-import React from 'react';
-
 const missionData = {
     HTML: {
         color: '#f97316',
@@ -187,12 +185,10 @@ export default function MissionBriefing({ mode, playStyle, onBack, onStart }) {
     return (
         <div className="w-full max-w-5xl mx-auto animate-in fade-in duration-500">
 
-            {/* Label */}
             <div className="font-mono text-xs tracking-widest mb-6" style={{ color: 'var(--accent)' }}>
                 // MISSION BRIEFING
             </div>
 
-            {/* Title + badges */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
                 <h1 className="text-5xl lg:text-6xl font-bold tracking-tighter" style={{ color: 'var(--text-primary)' }}>
                     READY TO{' '}
@@ -236,10 +232,8 @@ export default function MissionBriefing({ mode, playStyle, onBack, onStart }) {
                 </div>
             </div>
 
-            {/* 3-column info cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
-                {/* Objective */}
                 <div
                     className="rounded-xl p-6 flex flex-col gap-3"
                     style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
@@ -252,7 +246,6 @@ export default function MissionBriefing({ mode, playStyle, onBack, onStart }) {
                     </p>
                 </div>
 
-                {/* Notes */}
                 <div
                     className="rounded-xl p-6 flex flex-col gap-3"
                     style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
@@ -270,7 +263,6 @@ export default function MissionBriefing({ mode, playStyle, onBack, onStart }) {
                     </ul>
                 </div>
 
-                {/* Difficulty stats */}
                 <div
                     className="rounded-xl p-6 flex flex-col gap-4"
                     style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
@@ -306,7 +298,6 @@ export default function MissionBriefing({ mode, playStyle, onBack, onStart }) {
                 </div>
             </div>
 
-            {/* Pre-mission notes */}
             <div
                 className="rounded-xl p-5 mb-8 space-y-2"
                 style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
@@ -322,7 +313,6 @@ export default function MissionBriefing({ mode, playStyle, onBack, onStart }) {
                 </p>
             </div>
 
-            {/* Actions */}
             <div className="flex items-center justify-between">
                 <button
                     onClick={onBack}

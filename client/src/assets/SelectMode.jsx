@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const tiers = [
     {
@@ -225,24 +225,6 @@ export default function SelectMode({ onStartPractice }) {
                         </div>
                     </div>
                 ))}
-            </div>
-
-            <div
-                className="flex justify-between items-center text-[10px] font-mono tracking-widest mt-8 pt-8"
-                style={{ color: 'var(--text-faint)', borderTop: '1px solid var(--border-subtle)' }}
-            >
-                <div className="flex gap-4">
-                    {['free to play', 'real code', 'open source', 'github'].map(t => (
-                        <span key={t} className="cursor-pointer transition-colors hover:opacity-80">{t}</span>
-                    ))}
-                </div>
-                <div className="flex items-center gap-4">
-                    <span>typeC - © 2026</span>
-                    <div className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: 'var(--accent)' }} />
-                        <span style={{ color: 'var(--accent)' }}>avg latency: 0ms</span>
-                    </div>
-                </div>
             </div>
         </div>
     );

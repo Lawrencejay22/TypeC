@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const modeIcons = {
     HTML:         '< />',
@@ -76,7 +76,6 @@ export default function PreLaunch({ mode, onLaunch, onBack }) {
     return (
         <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center text-center py-12 animate-in fade-in duration-500">
 
-            {/* Badge */}
             <div
                 className="inline-flex items-center gap-2 font-mono text-[10px] tracking-widest px-4 py-1.5 rounded-full mb-10"
                 style={{ color, backgroundColor: `${color}18`, border: `1px solid ${color}44` }}
@@ -85,7 +84,6 @@ export default function PreLaunch({ mode, onLaunch, onBack }) {
                 {mode} // SESSION READY
             </div>
 
-            {/* Icon */}
             <div
                 className="w-24 h-24 rounded-2xl flex items-center justify-center mb-8 font-mono font-bold text-2xl"
                 style={{
@@ -98,22 +96,18 @@ export default function PreLaunch({ mode, onLaunch, onBack }) {
                 {icon}
             </div>
 
-            {/* Label */}
             <div className="font-mono text-xs tracking-widest mb-4" style={{ color: 'var(--text-faint)' }}>
                 // MISSION READY — STAND BY
             </div>
 
-            {/* Tagline */}
             <h1 className="text-5xl lg:text-7xl font-black tracking-tighter mb-6" style={{ color: 'var(--text-primary)' }}>
                 {tag}
             </h1>
 
-            {/* Description */}
             <p className="font-mono text-sm tracking-wide mb-12 max-w-md" style={{ color: 'var(--text-muted)' }}>
                 {desc}
             </p>
 
-            {/* Stats row */}
             <div className="flex gap-12 mb-14">
                 {[
                     { label: 'DURATION', value: '90 SEC' },
@@ -127,7 +121,6 @@ export default function PreLaunch({ mode, onLaunch, onBack }) {
                 ))}
             </div>
 
-            {/* Launch / countdown */}
             {!autoStart ? (
                 <button
                     onClick={() => setAutoStart(true)}
@@ -150,7 +143,6 @@ export default function PreLaunch({ mode, onLaunch, onBack }) {
                 </div>
             )}
 
-            {/* Bottom nav */}
             <div className="flex items-center gap-6 mt-12 font-mono text-[10px] tracking-widest" style={{ color: 'var(--text-faint)' }}>
                 <button onClick={onBack} className="transition-colors hover:opacity-80">← BACK</button>
                 <span>•</span>

@@ -1,0 +1,19 @@
+.matrix-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.matrix-bg span {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  line-height: 16.5px;
+  color: #2de06a;
+}
+
+:root.light .matrix-bg span {
+  color: #00b359;
+}

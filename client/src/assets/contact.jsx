@@ -1,94 +1,83 @@
 import { useState } from "react";
+import MatrixBg from "./component/MatrixBg.jsx";
 import "./contact.css";
 
-function Contact() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
+const emptyForm = {
+  name: "",
+  email: "",
+  subject: "",
+  message: "",
+};
 
-  const [status, setStatus] = useState("");
+const helpTopics = [
+  { title: "Report a Bug", hint: "Something broken?" },
+  { title: "Account Issue?", hint: "Can’t sign in?" },
+  { title: "Test Problem?", hint: "Results not showing?" },
+  { title: "General Question", hint: "Need more info?" },
+];
+
+function Contact() {
+  const [formData, setFormData] = useState(emptyForm);
+  const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleTopicClick = (topic) => {
-    setFormData((prev) => ({
-      ...prev,
-      subject: topic,
-    }));
+    setFormData((prev) => ({ ...prev, subject: topic.replace("?", "") }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    setStatus("");
+    setStatus(null);
     setLoading(true);
 
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
         throw new Error(data.message || "Something went wrong.");
       }
 
-      setStatus("Message sent successfully!");
-
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: "",
-      });
+      setStatus({ type: "success", text: "Message sent successfully!" });
+      setFormData(emptyForm);
     } catch (error) {
       console.error("Contact form error:", error);
-      setStatus(error.message || "Failed to send message.");
+      setStatus({ type: "error", text: error.message || "Failed to send message." });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="contact-page">
-      <div className="contact-header">
-        <span className="contact-label">Contact Page</span>
-        <h1>CONTACT US</h1>
-      </div>
+    <section className="contact-page">
+      <MatrixBg seed={11} />
+
+      <h1 className="contact-title">CONTACT US</h1>
 
       <div className="contact-grid">
-        {/* SEND MESSAGE */}
-        <section className="contact-card">
-          <h2>
+        <div className="contact-card">
+          <h2 className="contact-heading">
             SEND US A
             <br />
             MESSAGE
           </h2>
-
-          <p className="contact-description">
-            Fill out the form below and we'll respond as soon as possible.
+          <p className="contact-text">
+            Fill out the form below and we’ll respond as soon as possible.
           </p>
 
           <form onSubmit={handleSubmit} className="contact-form">
-            <div className="form-group">
-              <label htmlFor="name">Name</label>
-
+            <label className="contact-row" htmlFor="name">
+              <span>Name</span>
               <input
                 id="name"
                 type="text"
@@ -98,25 +87,23 @@ function Contact() {
                 onChange={handleChange}
                 required
               />
-            </div>
+            </label>
 
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-
+            <label className="contact-row" htmlFor="email">
+              <span>Email</span>
               <input
                 id="email"
                 type="email"
                 name="email"
-                placeholder="YourEmail123@gmail.com"
+                placeholder="yourEmail123@gmail.com"
                 value={formData.email}
                 onChange={handleChange}
                 required
               />
-            </div>
+            </label>
 
-            <div className="form-group">
-              <label htmlFor="subject">Subject</label>
-
+            <label className="contact-row" htmlFor="subject">
+              <span>Subject</span>
               <input
                 id="subject"
                 type="text"
@@ -126,111 +113,75 @@ function Contact() {
                 onChange={handleChange}
                 required
               />
-            </div>
+            </label>
 
-            <div className="form-group">
-              <label htmlFor="message">Message</label>
-
+            <label className="contact-row" htmlFor="message">
+              <span>Message</span>
               <textarea
                 id="message"
                 name="message"
                 placeholder="Write your message"
-                rows="5"
+                rows="4"
                 value={formData.message}
                 onChange={handleChange}
                 required
               />
+            </label>
+
+            <div className="contact-actions">
+              {status && (
+                <p className={`contact-status ${status.type}`}>{status.text}</p>
+              )}
+              <button type="submit" className="contact-send" disabled={loading}>
+                {loading ? "Sending..." : "Send"}
+              </button>
             </div>
-
-            <button
-              type="submit"
-              className="send-button"
-              disabled={loading}
-            >
-              {loading ? "Sending..." : "Send"}
-            </button>
-
-            {status && (
-              <p
-                className={`form-status ${
-                  status.includes("successfully") ? "success" : "error"
-                }`}
-              >
-                {status}
-              </p>
-            )}
           </form>
-        </section>
+        </div>
 
-        {/* NEED HELP */}
-        <section className="contact-card help-card">
-          <h2>NEED HELP?</h2>
-
-          <p className="contact-description">
-            Having some trouble with a test, account, or your result? Send us
-            a message of what happened. Make sure to add some details so that
-            our team can understand the problem.
+        <div className="contact-card">
+          <h2 className="contact-heading">NEED HELP?</h2>
+          <p className="contact-text">
+            Having some trouble with a test, account, or your result? Send us a
+            message of what happened. Make sure to add enough detail so that our
+            team can understand the problem.
           </p>
 
           <div className="help-grid">
-            <button
-              type="button"
-              onClick={() => handleTopicClick("Report a Bug")}
-            >
-              <strong>Report a Bug</strong>
-              <span>Something broken?</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleTopicClick("Account Issue")}
-            >
-              <strong>Account Issue?</strong>
-              <span>Can't sign in?</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleTopicClick("Test Problem")}
-            >
-              <strong>Test Problem?</strong>
-              <span>Results not showing?</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleTopicClick("General Question")}
-            >
-              <strong>General Question</strong>
-              <span>Need more info?</span>
-            </button>
+            {helpTopics.map((topic) => (
+              <button
+                key={topic.title}
+                type="button"
+                className={`help-tile ${
+                  formData.subject === topic.title.replace("?", "") ? "active" : ""
+                }`}
+                onClick={() => handleTopicClick(topic.title)}
+              >
+                <strong>{topic.title}</strong>
+                <span>{topic.hint}</span>
+              </button>
+            ))}
           </div>
-        </section>
+        </div>
 
-        {/* FEEDBACK */}
-        <section className="contact-card feedback-card">
-          <h2>
-            FEEDBACK &
+        <div className="contact-card contact-card-short">
+          <h2 className="contact-heading">
+            FEEDBACK &amp;
             <br />
             SUGGESTIONS
           </h2>
-
-          <p className="contact-description">
-            TypeC is still in development. Share your suggestions, ideas, or
-            send a feedback to help us make the typing and coding experience
-            better.
+          <p className="contact-text">
+            TypeC is still in development. Share your suggestions, ideas, or send
+            a feedback to help us make the typing and coding experience better.
           </p>
 
-          <div className="support">
+          <div className="contact-support">
             <h3>Support us</h3>
-
-            <a href="mailto:typecteam@gmail.com">
-              typecteam@gmail.com
-            </a>
+            <a href="mailto:typecteam@gmail.com">typeCteam@gmail.com</a>
           </div>
-        </section>
+        </div>
       </div>
-    </main>
+    </section>
   );
 }
 
