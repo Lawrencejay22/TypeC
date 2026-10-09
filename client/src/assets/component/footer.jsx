@@ -1,7 +1,12 @@
+import { useEffect, useState } from 'react';
+import { onLatency } from '../../api.js';
 import './footer.css';
 
 export default function Footer({ onNavigate }) {
+    const [latency, setLatency] = useState(null);
     const go = (view) => onNavigate && onNavigate(view);
+
+    useEffect(() => onLatency(setLatency), []);
 
     return (
         <footer className="tc-footer">
@@ -16,10 +21,10 @@ export default function Footer({ onNavigate }) {
             </div>
 
             <div className="tc-footer-right">
-                <span>typec v2.2.0 — © 2026</span>
+                <span>typec v2.3.0 — © 2026</span>
                 <span className="tc-footer-latency">
-                    <span className="tc-footer-latency-dot" />
-                    avg latency: <span className="is-green">12ms</span>
+                    <span className="tc-footer-latency-dot" style={latency === null ? { background: '#71717a' } : undefined} />
+                    avg latency: <span className="is-green">{latency === null ? '—' : `${latency}ms`}</span>
                 </span>
             </div>
         </footer>

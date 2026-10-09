@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { SelectModeSkeleton } from './component/Skeleton.jsx';
 
-export default function Welcome({ onComplete }) {
+export default function Welcome({ user, onComplete }) {
     const [progress, setProgress] = useState(0);
     const [ready, setReady] = useState(false);
 
@@ -55,11 +55,11 @@ export default function Welcome({ onComplete }) {
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4" style={{ color: 'var(--text-primary)' }}>
-                AUTHENTICATION <span style={{ color: 'var(--accent)' }}>SUCCESSFUL</span>
+                {user ? 'AUTHENTICATION' : 'GUEST ACCESS'} <span style={{ color: 'var(--accent)' }}>{user ? 'SUCCESSFUL' : 'GRANTED'}</span>
             </h1>
 
             <p className="font-mono tracking-widest text-sm mb-12 uppercase" style={{ color: 'var(--text-muted)' }}>
-                Welcome back, syntax_striker. Initializing typing arena...
+                {user ? `Welcome, ${user.username}.` : 'Welcome, guest pilot.'} Initializing typing arena...
             </p>
 
             <div className="w-full max-w-sm h-1 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--border-color)' }}>

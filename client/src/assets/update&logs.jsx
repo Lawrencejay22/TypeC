@@ -18,6 +18,20 @@ const HEADINGS = {
 
 const RELEASES = [
   {
+    version: "v0.5.0",
+    type: "minor",
+    date: "2026-10-10",
+    notes: [
+      "Real accounts with email verification codes",
+      "Optional two-factor sign-in from Profile → Settings",
+      "Runs are saved and checked on the server, so impossible scores get rejected",
+      "Live leaderboard ranked by average WPM, refreshed every few seconds",
+      "Badges are earned on the server and stored with the date you got them",
+      "Sound effects for shots, explosions, misses, streaks and the countdown",
+      "Follow other players and open their public profiles",
+    ],
+  },
+  {
     version: "v0.4.2",
     type: "patch",
     date: "2026-09-03",
@@ -61,11 +75,19 @@ const FAQS = [
   },
   {
     q: "Can I play without an account?",
-    a: "Yes — hit PLAY AS GUEST on the sign-in screen. Guest sessions are not saved to the leaderboard.",
+    a: "Yes — hit PLAY AS GUEST on the sign-in screen. Guest runs aren't saved, so they don't count for the leaderboard or badges.",
+  },
+  {
+    q: "How is the leaderboard ranked?",
+    a: "By your average WPM across every saved run. The server recalculates your WPM and accuracy from the run itself, so the numbers can't be edited from the browser.",
+  },
+  {
+    q: "How do I turn on two-factor sign-in?",
+    a: "Open Profile → Settings → Two-factor authentication. We email you a 6-digit code to confirm, and after that every sign-in asks for a fresh code.",
   },
   {
     q: "What languages are available?",
-    a: "HTML, CSS, JS, TS, Python, and SQL. Each language has curated word pools tuned to real syntax.",
+    a: "HTML, CSS, JavaScript, TypeScript, Python, SQL & Rust, Go, C++, Regex, or Random for a mix. Each pack uses snippets taken from real syntax.",
   },
   {
     q: "Why does the alien word shake red?",
@@ -77,7 +99,7 @@ const HELP_CARDS = [
   {
     icon: "⌨",
     title: "Typing controls",
-    text: "Just type — no mouse needed during gameplay. The game reads your keystrokes directly. Backspace is disabled mid-word to keep the pressure on.",
+    text: "Just type — no mouse needed during gameplay. The game reads your keystrokes directly. Press ESC any time to pause or resume.",
   },
   {
     icon: "🎯",
@@ -97,12 +119,12 @@ const HELP_CARDS = [
   {
     icon: "🌐",
     title: "Language packs",
-    text: "Choose from HTML, CSS, JS, TS, Python, or SQL. Each language has curated word pools tuned to real syntax — not lorem ipsum.",
+    text: "Choose from ten packs, from HTML and CSS to Go, C++ and Regex. Every pack uses real syntax — not lorem ipsum.",
   },
   {
     icon: "🏆",
     title: "Leaderboard",
-    text: "High scores are recorded per-language per-difficulty. Guest sessions are local only. Sign in to compete globally.",
+    text: "Every signed-in run is saved and ranked by average WPM. Guest runs stay local. Sign in to compete, earn badges and build a streak.",
   },
 ];
 
@@ -180,8 +202,8 @@ function Help() {
       <div className="up-help-note">
         <span aria-hidden="true">!</span>
         <p>
-          Having trouble? Open an issue on our GitHub or ping us in the community Discord. Include
-          your browser, OS, and which language pack you were playing.
+          Having trouble? Send us a message from the Contact page. Include your browser, OS, and
+          which language pack you were playing.
         </p>
       </div>
     </div>

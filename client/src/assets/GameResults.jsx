@@ -3,7 +3,45 @@ import { useEffect, useState } from 'react';
 const LANG_COLOR = {
     HTML: '#f97316', CSS: '#3b82f6', JAVASCRIPT: '#facc15',
     TYPESCRIPT: '#2563eb', PYTHON: '#00E572', 'SQL & RUST': '#ef4444',
+    GO: '#00ADD8', 'C++': '#b45309', REGEX: '#e879f9', RANDOM: '#a855f7',
 };
+
+function compareLine(save, wpm, signedIn) {
+    if (!signedIn) return 'GUEST RUN · NOT SAVED';
+    if (save.status === 'saving') return 'SAVING RUN...';
+    if (save.status !== 'saved') return 'NOT SAVED';
+    const { races, avgWpm } = save.data.stats;
+    if (races <= 1) return 'FIRST RUN ON RECORD';
+    const previous = (avgWpm * races - wpm) / (races - 1);
+    const diff = Math.round(wpm - previous);
+    if (diff === 0) return 'RIGHT ON YOUR AVERAGE';
+    return `${diff > 0 ? '+' : ''}${diff} FROM YOUR AVERAGE`;
+}
+
+function SaveBanner({ save, signedIn, onSignIn, color }) {
+    if (!signedIn) {
+        return (
+            <div className="tc-save-banner">
+                <span>Guest runs aren't saved. Create an account to climb the leaderboard and earn badges.</span>
+                <button type="button" onClick={onSignIn} style={{ color }}>SIGN IN / SIGN UP →</button>
+            </div>
+        );
+    }
+    if (save.status === 'saving' || save.status === 'idle') {
+        return <div className="tc-save-banner"><span>Saving your run...</span></div>;
+    }
+    if (save.status === 'error') {
+        return <div className="tc-save-banner is-error"><span>Run not saved: {save.message}</span></div>;
+    }
+    const { rank, personalBest } = save.data;
+    return (
+        <div className="tc-save-banner is-ok">
+            <span>✓ Saved to your profile</span>
+            <span>Global rank <strong style={{ color }}>#{rank}</strong></span>
+            {personalBest && <span className="tc-pb">★ NEW PERSONAL BEST</span>}
+        </div>
+    );
+}
 
 const RANK_STYLES = {
     'S-TIER': { color: '#00E572',  label: 'S-TIER', glow: 'rgba(0,229,114,0.25)' },
@@ -48,8 +86,13 @@ function StatCard({ label, value, sub, accent, large }) {
     );
 }
 
-export default function GameResults({ stats, onRetry, onBackToSelect, onLeaderboard }) {
-    const { score, wpm, accuracy, defeated, errors, timeElapsed, rank, mode, playStyle } = stats;
+export default function GameResults({ stats, save, signedIn, onRetry, onBackToSelect, onLeaderboard, onSignIn }) {
+    const saved = save.status === 'saved' ? save.data : null;
+    const { score, defeated, errors, timeElapsed, mode, playStyle } = stats;
+    const wpm      = saved ? saved.result.wpm : stats.wpm;
+    const accuracy = saved ? saved.result.accuracy : stats.accuracy;
+    const rank     = saved ? saved.result.grade : stats.rank;
+    const newBadges = saved ? saved.newBadges : [];
     const color      = LANG_COLOR[mode] || '#00E572';
     const rankStyle  = RANK_STYLES[rank] || RANK_STYLES['D-TIER'];
 
@@ -107,7 +150,7 @@ export default function GameResults({ stats, onRetry, onBackToSelect, onLeaderbo
                         {animWpm}
                     </div>
                     <div className="font-mono text-[10px] tracking-widest mt-2" style={{ color: 'var(--text-faint)' }}>
-                        +42 FROM AVERAGE
+                        {compareLine(save, wpm, signedIn)}
                     </div>
                 </div>
 
@@ -148,6 +191,23 @@ export default function GameResults({ stats, onRetry, onBackToSelect, onLeaderbo
                 </div>
             </div>
 
+            <SaveBanner save={save} signedIn={signedIn} onSignIn={onSignIn} color={color} />
+
+            {newBadges.length > 0 && (
+                <div className="tc-new-badges">
+                    <div className="tc-new-badges-label">ACHIEVEMENTS UNLOCKED</div>
+                    <div className="tc-new-badges-list">
+                        {newBadges.map((badge, i) => (
+                            <div key={badge.key} className="tc-new-badge" style={{ animationDelay: `${0.9 + i * 0.25}s` }}>
+                                <span className="tc-new-badge-icon">{badge.icon}</span>
+                                <span className="tc-new-badge-name">{badge.name}</span>
+                                <span className="tc-new-badge-desc">{badge.description}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             <div className="flex items-center justify-center gap-4 mb-6">
                 <button
                     onClick={onRetry}
@@ -156,15 +216,13 @@ export default function GameResults({ stats, onRetry, onBackToSelect, onLeaderbo
                 >
                     RETRY ↺
                 </button>
-                {playStyle === 'ranked' && (
-                    <button
-                        onClick={onLeaderboard}
-                        className="font-mono text-xs tracking-widest px-8 py-3.5 rounded-lg transition-colors"
-                        style={{ color: 'var(--text-primary)', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)' }}
-                    >
-                        [ LEADERBOARD ]
-                    </button>
-                )}
+                <button
+                    onClick={onLeaderboard}
+                    className="font-mono text-xs tracking-widest px-8 py-3.5 rounded-lg transition-colors"
+                    style={{ color: 'var(--text-primary)', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)' }}
+                >
+                    [ LEADERBOARD ]
+                </button>
             </div>
 
             <div className="text-center">
@@ -178,10 +236,9 @@ export default function GameResults({ stats, onRetry, onBackToSelect, onLeaderbo
             </div>
 
             <div className="flex justify-between items-center mt-10 font-mono text-[10px] tracking-widest" style={{ color: 'var(--text-faint)' }}>
-                <span>GLOBAL_GL_2061 • {mode} • {playStyle?.toUpperCase()}</span>
+                <span>{mode} • {playStyle?.toUpperCase()} • {defeated} KILLS • BEST STREAK {stats.bestStreak}</span>
                 <div className="flex items-center gap-3">
-                    <span style={{ color }}>● ONLINE</span>
-                    <span>TYPEC v2.2.0-STABLE</span>
+                    <span style={{ color: signedIn ? color : 'var(--text-faint)' }}>● {signedIn ? 'RANKED ACCOUNT' : 'GUEST'}</span>
                 </div>
             </div>
         </div>

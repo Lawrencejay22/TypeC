@@ -1,5 +1,6 @@
 import { useState } from "react";
 import MatrixBg from "./component/MatrixBg.jsx";
+import { post } from "../api.js";
 import "./contact.css";
 
 const emptyForm = {
@@ -16,8 +17,9 @@ const helpTopics = [
   { title: "General Question", hint: "Need more info?" },
 ];
 
-function Contact() {
-  const [formData, setFormData] = useState(emptyForm);
+function Contact({ user }) {
+  const startForm = () => ({ ...emptyForm, name: user?.username || "", email: user?.email || "" });
+  const [formData, setFormData] = useState(startForm);
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -36,23 +38,11 @@ function Contact() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(data.message || "Something went wrong.");
-      }
-
-      setStatus({ type: "success", text: "Message sent successfully!" });
-      setFormData(emptyForm);
+      const data = await post("/contact", formData);
+      setStatus({ type: "success", text: data.message });
+      setFormData(startForm());
     } catch (error) {
-      console.error("Contact form error:", error);
-      setStatus({ type: "error", text: error.message || "Failed to send message." });
+      setStatus({ type: "error", text: error.message });
     } finally {
       setLoading(false);
     }
@@ -82,6 +72,7 @@ function Contact() {
                 id="name"
                 type="text"
                 name="name"
+                maxLength={60}
                 placeholder="Your Full Name"
                 value={formData.name}
                 onChange={handleChange}
@@ -108,6 +99,7 @@ function Contact() {
                 id="subject"
                 type="text"
                 name="subject"
+                maxLength={100}
                 placeholder="What is it about?"
                 value={formData.subject}
                 onChange={handleChange}
@@ -122,6 +114,8 @@ function Contact() {
                 name="message"
                 placeholder="Write your message"
                 rows="4"
+                minLength={10}
+                maxLength={2000}
                 value={formData.message}
                 onChange={handleChange}
                 required
