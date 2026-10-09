@@ -9,7 +9,7 @@ try {
   process.exit(1);
 }
 
-const server = app.listen(env.port, () => {
+const server = app.listen(env.port, "0.0.0.0", () => {
   console.log(`TypeC API listening on http://localhost:${env.port}`);
 });
 
