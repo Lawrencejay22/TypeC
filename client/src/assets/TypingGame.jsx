@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { sfx, getSoundPrefs, setSoundPrefs, onSoundPrefs } from '../sound.js';
 import { toast } from '../toasts.js';
+import Logo from './component/Logo.jsx';
 
 const SNIPPETS = {
     HTML: [
@@ -752,7 +753,7 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
             >
                 
                 <div className="flex items-center gap-5">
-                    <span className="font-bold text-sm tracking-widest" style={{ color }}>TYPEC</span>
+                    <Logo size={13} className="is-on-dark" />
                     <span className="opacity-30">|</span>
                     <span className="opacity-50">SCORE</span>
                     <span className="font-bold text-base" style={{ color }}>{score.toLocaleString()}</span>

@@ -71,22 +71,6 @@
   gap: 10px;
 }
 
-.tc-brand-logo {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  object-fit: cover;
-  box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
-}
-
-.tc-brand span {
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 24px;
-  letter-spacing: 0.8px;
-  color: var(--h-brand);
-}
-
 .tc-nav {
   display: flex;
   align-items: center;

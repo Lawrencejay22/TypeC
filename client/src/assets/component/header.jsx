@@ -1,4 +1,4 @@
-import logo from '../logo/logo.png';
+import Logo from './Logo.jsx';
 import { useLiveStats } from '../../live.js';
 import './header.css';
 
@@ -23,8 +23,7 @@ export default function Header({ user, guest, onSignOut, isLight, onThemeToggle,
         <nav className="tc-header">
             <div className="tc-header-left">
                 <button type="button" className="tc-brand" onClick={() => go(canPlay ? 'home' : 'login')}>
-                    <img src={logo} alt="" className="tc-brand-logo" />
-                    <span>TYPEC</span>
+                    <Logo size={18} />
                 </button>
 
                 <ul className="tc-nav">
