@@ -1,0 +1,93 @@
+.tc-toasts {
+  position: fixed;
+  right: 20px;
+  top: 80px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.tc-toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 260px;
+  max-width: 340px;
+  padding: 12px 16px;
+  color: #e5e7eb;
+  background: rgba(10, 14, 20, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  animation: tc-toast-in 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+}
+
+.tc-toast.is-badge {
+  border-color: rgba(45, 224, 106, 0.55);
+  box-shadow: 0 0 24px rgba(45, 224, 106, 0.25), 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+.tc-toast.is-streak {
+  border-color: rgba(249, 115, 22, 0.6);
+}
+
+.tc-toast.is-error {
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
+.tc-toast-icon {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.tc-toast-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tc-toast-label {
+  font-size: 9px;
+  letter-spacing: 1.4px;
+  color: #2de06a;
+}
+
+.tc-toast.is-streak .tc-toast-label {
+  color: #f97316;
+}
+
+.tc-toast.is-error .tc-toast-label {
+  color: #ef4444;
+}
+
+.tc-toast strong {
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.tc-toast-text {
+  font-size: 11px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+@keyframes tc-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tc-toast {
+    animation: none;
+  }
+}

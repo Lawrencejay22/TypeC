@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { sfx, getSoundPrefs, setSoundPrefs, onSoundPrefs } from '../sound.js';
+import { toast } from '../toasts.js';
+import Logo from './component/Logo.jsx';
 
 const SNIPPETS = {
     HTML: [
@@ -208,6 +211,20 @@ function Laser({ from, to, color }) {
         </svg>
     );
 }
+
+function Explosion({ x, y, color }) {
+    return (
+        <div className="tc-boom" style={{ left: x, top: y + 20, '--boom': color }}>
+            <span className="tc-boom-ring" />
+            <span className="tc-boom-core" />
+            {[0, 1, 2, 3, 4, 5, 6, 7].map(i => (
+                <span key={i} className="tc-boom-spark" style={{ '--angle': `${i * 45}deg` }} />
+            ))}
+        </div>
+    );
+}
+
+const STREAK_START = 5;
 
 function AlienSVG({ lang, color, size = 40 }) {
     const c = color;
@@ -423,9 +440,18 @@ const Stars = React.memo(function Stars() {
 const DURATION   = 90;
 const SHIP_FLOOR = 68;
 
+function pickSnippet(mode) {
+    if (mode === 'RANDOM') {
+        const lang = ALL_LANGUAGES[Math.floor(Math.random() * ALL_LANGUAGES.length)];
+        const bank = SNIPPETS[lang];
+        return { snippet: bank[Math.floor(Math.random() * bank.length)], lang };
+    }
+    const bank = SNIPPETS[mode] || SNIPPETS.HTML;
+    return { snippet: bank[Math.floor(Math.random() * bank.length)], lang: mode };
+}
+
 export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
     const color    = LANG_COLOR[mode] || '#00E572';
-    const snippets = SNIPPETS[mode]   || SNIPPETS.HTML;
 
     const arenaRef       = useRef(null);
     const inputRef       = useRef(null);
@@ -442,6 +468,11 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
     const totalRef       = useRef(0);
     const timeRef        = useRef(DURATION);
     const gameOverCalled = useRef(false);
+    const streakRef      = useRef(0);
+    const bestStreakRef  = useRef(0);
+    const lockedRef      = useRef(null);
+    const boomIdRef      = useRef(0);
+    const gameOverRef    = useRef(null);
 
     const [arenaW,     setArenaW]     = useState(window.innerWidth);
     const [,           setArenaH]     = useState(window.innerHeight);
@@ -456,15 +487,12 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
     const [paused,     setPaused]     = useState(false);
     const [laser,      setLaser]      = useState(null);
     const [shipX,      setShipX]      = useState(0);
+    const [streak,     setStreak]     = useState(0);
+    const [booms,      setBooms]      = useState([]);
+    const [hitFlash,   setHitFlash]   = useState(0);
+    const [muted,      setMuted]      = useState(() => getSoundPrefs().muted);
 
-    function getSnippet() {
-        if (mode === 'RANDOM') {
-            const lang = ALL_LANGUAGES[Math.floor(Math.random() * ALL_LANGUAGES.length)];
-            const bank = SNIPPETS[lang];
-            return { snippet: bank[Math.floor(Math.random() * bank.length)], lang };
-        }
-        return { snippet: snippets[Math.floor(Math.random() * snippets.length)], lang: mode };
-    }
+    useEffect(() => onSoundPrefs((prefs) => setMuted(prefs.muted)), []);
 
     useEffect(() => {
         const obs = new ResizeObserver(entries => {
@@ -480,7 +508,7 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
 
     useEffect(() => {
         function spawnOne() {
-            const { snippet, lang } = getSnippet();
+            const { snippet, lang } = pickSnippet(mode);
             const alien = makeAlien(alienIdRef.current++, snippet, arenaWRef.current, lang);
             alienRef.current = [...alienRef.current, alien];
             setAliens([...alienRef.current]);
@@ -490,8 +518,7 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
             if (!pausedRef.current && timeRef.current > 0) spawnOne();
         }, 1800);
         return () => clearInterval(iv);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [mode]);
 
     useEffect(() => {
         let last = performance.now();
@@ -520,9 +547,12 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                 const h = Math.max(0, healthRef.current - 1);
                 healthRef.current = h;
                 setHealth(h);
+                sfx.hit();
+                setHitFlash(f => f + 1);
+                breakStreak();
                 if (h <= 0 && !gameOverCalled.current) {
                     gameOverCalled.current = true;
-                    doGameOver();
+                    gameOverRef.current();
                 }
             }
 
@@ -530,7 +560,6 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
         }
         frameRef.current = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(frameRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -540,16 +569,17 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
             setTimeLeft(timeRef.current);
             if (timeRef.current <= 0 && !gameOverCalled.current) {
                 gameOverCalled.current = true;
-                doGameOver();
+                gameOverRef.current();
             }
         }, 1000);
         return () => clearInterval(iv);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => { inputRef.current?.focus(); }, []);
 
     const doGameOver = useCallback(() => {
+        if (healthRef.current <= 0) sfx.gameOver();
+        else sfx.victory();
         const elapsed = DURATION - timeRef.current;
         const wpm     = elapsed > 0 ? Math.round((totalRef.current / 5) / (elapsed / 60)) : 0;
         const acc     = totalRef.current + errorsRef.current > 0
@@ -561,6 +591,8 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
             accuracy:    acc,
             defeated:    defeatedRef.current,
             errors:      errorsRef.current,
+            chars:       totalRef.current,
+            bestStreak:  bestStreakRef.current,
             timeElapsed: elapsed,
             rank:        getRank(Math.max(0, wpm)),
             mode,
@@ -568,8 +600,37 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
         });
     }, [mode, playStyle, onGameOver]);
 
+    useEffect(() => {
+        gameOverRef.current = doGameOver;
+    }, [doGameOver]);
+
+    function breakStreak() {
+        if (streakRef.current >= STREAK_START) sfx.streakLost();
+        streakRef.current = 0;
+        setStreak(0);
+    }
+
+    function addKill() {
+        streakRef.current += 1;
+        bestStreakRef.current = Math.max(bestStreakRef.current, streakRef.current);
+        setStreak(streakRef.current);
+        const s = streakRef.current;
+        if (s >= STREAK_START && s % 5 === 0) {
+            sfx.streak(s / 5);
+            toast({
+                kind: 'streak',
+                icon: '🔥',
+                label: s === STREAK_START ? 'STREAK MODE' : 'COMBO',
+                title: `STREAK ×${s}`,
+                text: s === STREAK_START ? 'Score doubled until you miss a key.' : `${s} clean kills in a row.`,
+                duration: 2200,
+            });
+        }
+    }
+
     function handleInput(e) {
         const val = e.target.value;
+        const typedMore = val.length > inputVal.length;
         setInputVal(val);
 
         const live   = alienRef.current.filter(a => a.alive && !a.hit);
@@ -578,19 +639,30 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
             .sort((a, b) => b.y - a.y)[0];
 
         if (!target) {
-            if (val.length > inputVal.length) {
+            if (typedMore) {
                 errorsRef.current++;
                 setErrors(errorsRef.current);
+                sfx.miss();
+                breakStreak();
             }
             return;
+        }
+
+        if (target.id !== lockedRef.current) {
+            lockedRef.current = target.id;
+            sfx.lock();
+        } else if (typedMore) {
+            sfx.key();
         }
 
         alienRef.current = alienRef.current.map(a =>
             a.id === target.id ? { ...a, typed: val } : a
         );
         setAliens([...alienRef.current]);
-        totalRef.current++;
-        setTotalTyped(totalRef.current);
+        if (typedMore) {
+            totalRef.current++;
+            setTotalTyped(totalRef.current);
+        }
         setShipX(target.x);
 
         if (val === target.snippet) {
@@ -602,6 +674,13 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                 color: shotColor,
             });
             setTimeout(() => setLaser(null), 200);
+            sfx.shoot();
+            sfx.explode();
+            lockedRef.current = null;
+
+            const boom = { id: boomIdRef.current++, x: target.x, y: target.y, color: shotColor };
+            setBooms(list => [...list, boom]);
+            setTimeout(() => setBooms(list => list.filter(b => b.id !== boom.id)), 520);
 
             alienRef.current = alienRef.current.map(a =>
                 a.id === target.id ? { ...a, hit: true, alive: false } : a
@@ -611,7 +690,9 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                 setAliens([...alienRef.current]);
             }, 300);
 
-            scoreRef.current += Math.ceil(target.snippet.length * 12);
+            addKill();
+            const multiplier = streakRef.current >= STREAK_START ? 2 : 1;
+            scoreRef.current += Math.ceil(target.snippet.length * 12) * multiplier;
             defeatedRef.current++;
             setScore(scoreRef.current);
             setDefeated(defeatedRef.current);
@@ -620,10 +701,30 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
     }
 
     function togglePause() {
+        if (timeRef.current <= 0 || gameOverCalled.current) return;
         pausedRef.current = !pausedRef.current;
         setPaused(pausedRef.current);
-        if (!pausedRef.current) inputRef.current?.focus();
+        if (pausedRef.current) sfx.pause();
+        else {
+            sfx.resume();
+            inputRef.current?.focus();
+        }
     }
+
+    const toggleRef = useRef(togglePause);
+    toggleRef.current = togglePause;
+
+    useEffect(() => {
+        const onKey = (e) => {
+            if (e.key !== 'Escape') return;
+            e.preventDefault();
+            toggleRef.current();
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, []);
+
+    const toggleMute = () => setSoundPrefs({ muted: !muted });
 
     const elapsed     = DURATION - timeLeft;
     const liveWpm     = elapsed > 5 ? Math.round((totalTyped / 5) / (elapsed / 60)) : 0;
@@ -652,7 +753,7 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
             >
                 
                 <div className="flex items-center gap-5">
-                    <span className="font-bold text-sm tracking-widest" style={{ color }}>TYPEC</span>
+                    <Logo size={13} className="is-on-dark" />
                     <span className="opacity-30">|</span>
                     <span className="opacity-50">SCORE</span>
                     <span className="font-bold text-base" style={{ color }}>{score.toLocaleString()}</span>
@@ -666,6 +767,11 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                     <span className="font-bold">
                         {accuracy}<span className="opacity-40 text-[10px]">%</span>
                     </span>
+                    {streak >= STREAK_START && (
+                        <span className="tc-streak-pill" key={streak}>
+                            🔥 STREAK ×{streak} <span className="opacity-70">· 2× PTS</span>
+                        </span>
+                    )}
                 </div>
 
                 <div className="flex items-center gap-5">
@@ -698,6 +804,14 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                     >
                         {minutes}:{secs}
                     </span>
+                    <button
+                        onClick={toggleMute}
+                        title={muted ? 'Turn sound on' : 'Mute sound'}
+                        className="px-3 py-1 rounded text-[10px] tracking-widest transition-colors"
+                        style={{ color: muted ? '#ef4444' : 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.12)' }}
+                    >
+                        {muted ? '🔇 MUTED' : '🔊 SOUND'}
+                    </button>
                     <button
                         onClick={togglePause}
                         className="px-3 py-1 rounded text-[10px] tracking-widest transition-colors"
@@ -737,6 +851,12 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                 {laser && (
                     <Laser from={laser.from} to={laser.to} color={laser.color} />
                 )}
+
+                {booms.map(b => (
+                    <Explosion key={b.id} x={b.x} y={b.y} color={b.color} />
+                ))}
+
+                {hitFlash > 0 && <div key={hitFlash} className="tc-hit-flash" />}
 
                 <div
                     className="absolute"

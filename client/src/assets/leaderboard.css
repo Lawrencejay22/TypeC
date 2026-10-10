@@ -152,22 +152,6 @@
   line-height: 16.5px;
 }
 
-.lb-avatar {
-  flex-shrink: 0;
-  display: block;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.lb-avatar-fallback {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #ffffff;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
 .lb-list {
   display: flex;
   flex-direction: column;
@@ -326,13 +310,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 18px;
-  width: 138px;
-  height: 21px;
+  gap: 10px;
+  min-width: 138px;
+  height: 24px;
+  padding: 0 12px;
   margin-top: auto;
-  padding: 0;
   font: inherit;
-  font-size: 16px;
+  font-size: 15px;
   color: #000000;
   background: #2de06a;
   border: none;
@@ -408,5 +392,109 @@
   .lb-preview.on-row {
     left: auto;
     right: 12px;
+  }
+}
+
+.lb-live {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: -8px 0 18px !important;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--lb-muted);
+}
+
+.lb-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--lb-green);
+  box-shadow: 0 0 8px var(--lb-green);
+  animation: lb-pulse 1.6s ease-in-out infinite;
+}
+
+.lb-live-dot.is-down {
+  background: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+}
+
+@keyframes lb-pulse {
+  50% { opacity: 0.35; }
+}
+
+.lb-podium-races {
+  margin-top: 10px !important;
+  font-size: 11px;
+  color: var(--lb-muted);
+}
+
+.lb-podium-card.is-you,
+.lb-row.is-you {
+  box-shadow: 0 0 0 1px var(--lb-green), 0 0 22px rgba(45, 224, 106, 0.18);
+}
+
+.lb-row-name em {
+  font-style: normal;
+  font-size: 13px;
+  color: var(--lb-green);
+}
+
+.lb-podium-card.is-loading {
+  cursor: default;
+}
+
+.lb-skeleton {
+  display: block;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--lb-row) 0%, rgba(128, 128, 128, 0.25) 50%, var(--lb-row) 100%) 0 0 / 300% 100%;
+  animation: lb-shimmer 1.3s ease-in-out infinite;
+}
+
+.lb-avatar.lb-skeleton {
+  border-radius: 50%;
+}
+
+@keyframes lb-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: 0 0; }
+}
+
+.lb-empty-state {
+  padding: 56px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--lb-muted);
+}
+
+.lb-empty-title {
+  margin-bottom: 8px !important;
+  font-size: 20px;
+  color: var(--lb-text);
+}
+
+.lb-preview-nobadge {
+  font-size: 10px !important;
+  line-height: 36px;
+  color: var(--lb-muted);
+}
+
+.lb-preview-you {
+  margin-top: auto;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--lb-green);
+}
+
+.lb-preview-follow:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lb-live-dot,
+  .lb-skeleton {
+    animation: none;
   }
 }

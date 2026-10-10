@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: typec-api
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: TIMEZONE
+        value: Asia/Manila
+      - key: TRUST_PROXY
+        value: "2"
+      - key: MAIL_FROM_NAME
+        value: TypeC
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGO_URI
+        sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      - key: MAIL_FROM_EMAIL
+        sync: false
+      - key: CONTACT_INBOX
+        sync: false

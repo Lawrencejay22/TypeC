@@ -1,0 +1,32 @@
+.tc-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28em;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.tc-logo-word {
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.tc-logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2em;
+  height: 1.5em;
+  font-weight: 500;
+  color: #000000;
+  background: #00f77b;
+  border-radius: 0.14em;
+  box-shadow: 0 0 14px rgba(0, 247, 123, 0.28);
+}
+
+.tc-logo.is-on-dark .tc-logo-word {
+  color: #ffffff;
+}

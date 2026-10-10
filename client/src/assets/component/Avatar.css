@@ -1,0 +1,15 @@
+.lb-avatar {
+  flex-shrink: 0;
+  display: block;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.lb-avatar-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLiveStats, compact } from '../live.js';
 
 const tiers = [
     {
@@ -83,6 +84,7 @@ function Card({ dot, name, wpm, desc, hoverText, onStartPractice }) {
 
 export default function SelectMode({ onStartPractice }) {
     const [activeFilter, setActiveFilter] = useState('all');
+    const stats = useLiveStats();
 
     const visibleTiers = tiers.filter(tier => {
         if (activeFilter === 'all')    return true;
@@ -116,19 +118,19 @@ export default function SelectMode({ onStartPractice }) {
                     style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
                 >
                     <div>
-                        <div className="text-[10px] font-mono tracking-widest mb-2 uppercase" style={{ color: 'var(--text-faint)' }}>ACTIVE DEV</div>
-                        <div className="text-2xl font-bold" style={{ color: 'var(--accent)' }}>84K+</div>
+                        <div className="text-[10px] font-mono tracking-widest mb-2 uppercase" style={{ color: 'var(--text-faint)' }}>TYPISTS</div>
+                        <div className="text-2xl font-bold" style={{ color: 'var(--accent)' }}>{compact(stats?.typists)}</div>
                     </div>
                     <div>
                         <div className="text-[10px] font-mono tracking-widest mb-2 uppercase" style={{ color: 'var(--text-faint)' }}>TOP RECORD</div>
                         <div className="text-2xl font-bold">
-                            <span style={{ color: 'var(--accent)' }}>248</span>{' '}
+                            <span style={{ color: 'var(--accent)' }}>{stats ? stats.topWpm : '—'}</span>{' '}
                             <span className="text-xs" style={{ color: 'var(--text-faint)' }}>WPM</span>
                         </div>
                     </div>
                     <div>
                         <div className="text-[10px] font-mono tracking-widest mb-2 uppercase" style={{ color: 'var(--text-faint)' }}>TESTS RUN</div>
-                        <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>4.2M+</div>
+                        <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{compact(stats?.testsRun)}</div>
                     </div>
                 </div>
             </div>

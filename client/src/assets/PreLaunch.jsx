@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { sfx } from '../sound.js';
 
 const modeIcons = {
     HTML:         '< />',
@@ -54,8 +55,8 @@ const modeDesc = {
 
 export default function PreLaunch({ mode, onLaunch, onBack }) {
     const [countdown, setCountdown] = useState(3);
-    const [launched,  setLaunched]  = useState(false);
     const [autoStart, setAutoStart] = useState(false);
+    const launched = autoStart && countdown <= 0;
 
     const color = modeColors[mode] || '#00E572';
     const icon  = modeIcons[mode]  || '?';
@@ -64,8 +65,13 @@ export default function PreLaunch({ mode, onLaunch, onBack }) {
 
     useEffect(() => {
         if (!autoStart) return;
+        if (countdown > 0) sfx.countdown();
+        else sfx.launch();
+    }, [autoStart, countdown]);
+
+    useEffect(() => {
+        if (!autoStart) return;
         if (countdown <= 0) {
-            setLaunched(true);
             const t = setTimeout(onLaunch, 600);
             return () => clearTimeout(t);
         }
@@ -146,7 +152,7 @@ export default function PreLaunch({ mode, onLaunch, onBack }) {
             <div className="flex items-center gap-6 mt-12 font-mono text-[10px] tracking-widest" style={{ color: 'var(--text-faint)' }}>
                 <button onClick={onBack} className="transition-colors hover:opacity-80">← BACK</button>
                 <span>•</span>
-                <span>TYPEC v2.2.0</span>
+                <span>TYPEC v2.3.0</span>
                 <span>•</span>
                 <span>© 2026</span>
             </div>
