@@ -7,7 +7,6 @@ import Login from './assets/login.jsx'
 import Welcome from './assets/Welcome.jsx'
 import Home from './assets/home.jsx'
 import ModeSelect from './assets/ModeSelect.jsx'
-import MissionBriefing from './assets/MissionBriefing.jsx'
 import PreLaunch from './assets/PreLaunch.jsx'
 import TypingGame from './assets/TypingGame.jsx'
 import GameResults from './assets/GameResults.jsx'
@@ -17,12 +16,11 @@ import Leaderboard from './assets/leaderboard.jsx'
 import Profile from './assets/profile.jsx'
 import UpdatesLogs from './assets/update&logs.jsx'
 import Multiplayer from './assets/multiplayer.jsx'
-import { LoginSkeleton, SelectModeSkeleton } from './assets/component/Skeleton.jsx'
 import { get, post } from './api.js'
 import { refreshStats } from './live.js'
 import { toast } from './toasts.js'
 
-const TRANSIENT_VIEWS = new Set(['welcome', 'modeselect', 'briefing', 'prelaunch', 'game', 'results']);
+const TRANSIENT_VIEWS = new Set(['welcome', 'modeselect', 'prelaunch', 'game', 'results']);
 const PUBLIC_VIEWS = new Set(['login', 'about', 'contact', 'leaderboard', 'updates', 'docs', 'player']);
 
 function readSession(key) {
@@ -30,6 +28,24 @@ function readSession(key) {
     return sessionStorage.getItem(key);
   } catch {
     return null;
+  }
+}
+
+function readCachedUser() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('typec_user'));
+    return saved && typeof saved.username === 'string' ? saved : null;
+  } catch {
+    return null;
+  }
+}
+
+function cacheUser(user) {
+  try {
+    if (user) localStorage.setItem('typec_user', JSON.stringify(user));
+    else localStorage.removeItem('typec_user');
+  } catch {
+    return;
   }
 }
 
@@ -48,8 +64,7 @@ export default function App() {
     return TRANSIENT_VIEWS.has(saved) ? 'home' : (saved || 'login');
   });
 
-  const [user,      setUser]      = useState(null);
-  const [authReady, setAuthReady] = useState(false);
+  const [user,      setUserState] = useState(readCachedUser);
   const [guest,     setGuest]     = useState(() => readSession('typec_guest') === '1');
 
   const [selectedMode,      setSelectedMode]      = useState(null);
@@ -58,30 +73,26 @@ export default function App() {
   const [saveState,         setSaveState]         = useState({ status: 'idle' });
   const [viewedPlayer,      setViewedPlayer]      = useState(() => readSession('typec_player'));
 
-  const sessionIdRef = useRef(null);
+  const sessionRef = useRef(null);
+
+  const setUser = useCallback((next) => {
+    cacheUser(next);
+    setUserState(next);
+  }, []);
 
   const [isLight, setIsLight] = useState(() => readSession('typec_theme') === 'light');
-  const [fontsReady, setFontsReady] = useState(() => !document.fonts || document.fonts.status === 'loaded');
 
   useEffect(() => {
     document.documentElement.classList.toggle('light', isLight);
   }, [isLight]);
 
   useEffect(() => {
-    if (fontsReady) return;
-    let alive = true;
-    document.fonts.ready.then(() => alive && setFontsReady(true));
-    return () => { alive = false; };
-  }, [fontsReady]);
-
-  useEffect(() => {
     let alive = true;
     get('/auth/me')
       .then((data) => alive && setUser(data.user))
-      .catch(() => {})
-      .finally(() => alive && setAuthReady(true));
+      .catch(() => {});
     return () => { alive = false; };
-  }, []);
+  }, [setUser]);
 
   const navigate = useCallback((view) => {
     writeSession('typec_view', view);
@@ -93,8 +104,8 @@ export default function App() {
   const canPlay = signedIn || guest;
 
   let view = currentView;
-  if (authReady && !canPlay && !PUBLIC_VIEWS.has(view)) view = 'login';
-  if (authReady && signedIn && view === 'login') view = 'home';
+  if (!canPlay && !PUBLIC_VIEWS.has(view)) view = 'login';
+  if (signedIn && view === 'login') view = 'home';
 
   const handleAuthed = (nextUser) => {
     setUser(nextUser);
@@ -145,24 +156,24 @@ export default function App() {
 
   const handlePlayStyleSelect = (style) => {
     setSelectedPlayStyle(style);
-    navigate('briefing');
+    navigate('prelaunch');
   };
 
-  const handleBriefingStart = () => navigate('prelaunch');
-
-  const handleLaunch = async () => {
-    sessionIdRef.current = null;
+  const openSession = () => {
     setSaveState({ status: 'idle' });
-    navigate('game');
-    if (!signedIn) return;
-    try {
-      const data = await post('/games/start', { mode: selectedMode, playStyle: selectedPlayStyle });
-      sessionIdRef.current = data.sessionId;
-    } catch (err) {
-      sessionIdRef.current = null;
-      setSaveState({ status: 'error', message: err.message });
+    if (!signedIn || selectedPlayStyle !== 'ranked') {
+      sessionRef.current = Promise.resolve(null);
+      return;
     }
+    sessionRef.current = post('/games/start', { mode: selectedMode, playStyle: selectedPlayStyle })
+      .then((data) => data.sessionId)
+      .catch((err) => {
+        setSaveState({ status: 'error', message: err.message });
+        return null;
+      });
   };
+
+  const handleLaunch = () => navigate('game');
 
   const handleGameOver = async (stats) => {
     setGameStats(stats);
@@ -172,9 +183,13 @@ export default function App() {
       setSaveState({ status: 'guest' });
       return;
     }
+    if (selectedPlayStyle !== 'ranked') {
+      setSaveState({ status: 'practice' });
+      return;
+    }
 
-    const sessionId = sessionIdRef.current;
-    sessionIdRef.current = null;
+    const sessionId = await sessionRef.current;
+    sessionRef.current = null;
     if (!sessionId) {
       setSaveState((prev) => (prev.status === 'error' ? prev : { status: 'error', message: 'This run could not be linked to your account.' }));
       return;
@@ -213,7 +228,6 @@ export default function App() {
   };
 
   const isGame = view === 'game';
-  const loading = !authReady || !fontsReady;
 
   return (
     <div className="min-h-screen flex flex-col font-sans">
@@ -228,16 +242,16 @@ export default function App() {
           onNavigate={navigate}
         />
       )}
-      <main className={isGame ? 'flex-grow' : 'flex-grow flex items-center justify-center px-6 py-8 min-h-0'}>
-        {view === 'login' && (loading ? <LoginSkeleton /> : <Login onAuthed={handleAuthed} onGuest={handleGuest} />)}
+      <main className={isGame ? 'flex-grow' : 'flex-grow flex items-center justify-center px-4 sm:px-6 py-6 sm:py-8 min-h-0'}>
+        {view === 'login' && <Login onAuthed={handleAuthed} onGuest={handleGuest} />}
         {view === 'welcome' && <Welcome user={user} onComplete={() => navigate('home')} />}
-        {view === 'home' && (loading ? <SelectModeSkeleton /> : <Home onStartPractice={handleStartPractice} />)}
+        {view === 'home' && <Home onStartPractice={handleStartPractice} />}
         {view === 'contact' && <Contact key={user?.username || 'guest'} user={user} />}
         {view === 'about' && <About />}
         {view === 'leaderboard' && <Leaderboard user={user} onViewProfile={openPlayer} onSignIn={() => navigate('login')} />}
-        {view === 'profile' && !loading && (
+        {view === 'profile' && (
           <Profile
-            key="me"
+            key={user ? 'me' : 'guest'}
             user={user}
             onBack={() => navigate('home')}
             onSignIn={goToLogin}
@@ -262,24 +276,17 @@ export default function App() {
         {view === 'modeselect' && (
           <ModeSelect
             mode={selectedMode}
+            signedIn={signedIn}
             onSelect={handlePlayStyleSelect}
             onBack={() => navigate('home')}
-          />
-        )}
-
-        {view === 'briefing' && (
-          <MissionBriefing
-            mode={selectedMode}
-            playStyle={selectedPlayStyle}
-            onBack={() => navigate('modeselect')}
-            onStart={handleBriefingStart}
           />
         )}
 
         {view === 'prelaunch' && (
           <PreLaunch
             mode={selectedMode}
-            onBack={() => navigate('briefing')}
+            onReady={openSession}
+            onBack={() => navigate('modeselect')}
             onLaunch={handleLaunch}
           />
         )}

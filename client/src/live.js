@@ -64,3 +64,17 @@ export function compact(n) {
   if (n >= 10_000) return `${Math.round(n / 1000)}K`;
   return n.toLocaleString("en-US");
 }
+
+export const WAKE_NOTE = "The server is waking up. The first load can take up to a minute.";
+
+export function useSlow(waiting, ms = 4000) {
+  const [slow, setSlow] = useState(false);
+
+  useEffect(() => {
+    if (!waiting) return undefined;
+    const timer = setTimeout(() => setSlow(true), ms);
+    return () => clearTimeout(timer);
+  }, [waiting, ms]);
+
+  return waiting && slow;
+}

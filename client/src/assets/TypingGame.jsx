@@ -186,14 +186,42 @@ function getRank(wpm) {
     return RANK_THRESHOLDS.find(r => wpm >= r.min)?.label ?? 'D-TIER';
 }
 
-function makeAlien(id, snippet, arenaW, lang) {
-    const dir = Math.random() > 0.5 ? 1 : -1;
+const TIER = {
+    HTML: 'easy', CSS: 'easy', JAVASCRIPT: 'easy',
+    TYPESCRIPT: 'medium', PYTHON: 'medium', 'SQL & RUST': 'medium', RANDOM: 'medium',
+    GO: 'hard', 'C++': 'hard', REGEX: 'hard',
+};
+
+const PACE = {
+    easy:   { every: 3500, maxAlive: 3, fallSeconds: 40 },
+    medium: { every: 2800, maxAlive: 4, fallSeconds: 32 },
+    hard:   { every: 2200, maxAlive: 5, fallSeconds: 26 },
+};
+
+const LANE_WIDTH = 300;
+const EDGE = 24;
+
+function pickLane(aliens, arenaW) {
+    const usable = Math.max(arenaW - EDGE * 2, 200);
+    const lanes = Math.max(1, Math.floor(usable / LANE_WIDTH));
+    const width = usable / lanes;
+    const busy = new Set(aliens.filter(a => a.alive && a.y < 150).map(a => a.lane));
+    const free = [];
+    for (let i = 0; i < lanes; i++) if (!busy.has(i)) free.push(i);
+    if (!free.length) return null;
+    const lane = free[Math.floor(Math.random() * free.length)];
+    return { lane, x: EDGE + width * (lane + 0.5) };
+}
+
+function makeAlien(id, snippet, lang, spot, arenaH, pace) {
+    const travel = Math.max(arenaH, 300) + 80;
+    const seconds = pace.fallSeconds * (0.9 + Math.random() * 0.2);
     return {
         id, snippet, typed: '', lang,
-        x:   120 + Math.random() * Math.max(arenaW - 280, 100),
-        y:   -80,
-        vy:  0.12 + Math.random() * 0.08,
-        vx:  (0.3 + Math.random() * 0.4) * dir,
+        lane: spot.lane,
+        x:  spot.x,
+        y:  -80,
+        vy: (travel / (seconds * 1000)) * 16,
         alive: true,
         hit:   false,
     };
@@ -395,7 +423,7 @@ function Alien({ alien, color, isTarget }) {
                 <AlienSVG lang={alien.lang} color={color} size={40} />
             </div>
             <div
-                className="font-mono text-sm font-bold px-3 py-1 rounded-lg whitespace-nowrap"
+                className="font-mono text-xs sm:text-sm font-bold px-2 sm:px-3 py-1 rounded-lg whitespace-nowrap"
                 style={{
                     backgroundColor: isTarget ? `${color}22` : 'rgba(0,0,0,0.7)',
                     border: `1px solid ${isTarget ? color + '80' : 'rgba(255,255,255,0.12)'}`,
@@ -507,16 +535,26 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
     }, []);
 
     useEffect(() => {
+        const pace = PACE[TIER[mode] || 'medium'];
+        let sinceSpawn = 0;
         function spawnOne() {
+            const alive = alienRef.current.filter(a => a.alive && !a.hit);
+            if (alive.length >= pace.maxAlive) return;
+            const spot = pickLane(alive, arenaWRef.current);
+            if (!spot) return;
             const { snippet, lang } = pickSnippet(mode);
-            const alien = makeAlien(alienIdRef.current++, snippet, arenaWRef.current, lang);
+            const alien = makeAlien(alienIdRef.current++, snippet, lang, spot, arenaHRef.current - SHIP_FLOOR, pace);
             alienRef.current = [...alienRef.current, alien];
             setAliens([...alienRef.current]);
+            sinceSpawn = 0;
         }
         spawnOne();
         const iv = setInterval(() => {
-            if (!pausedRef.current && timeRef.current > 0) spawnOne();
-        }, 1800);
+            if (pausedRef.current || timeRef.current <= 0) return;
+            sinceSpawn += 250;
+            const empty = !alienRef.current.some(a => a.alive && !a.hit);
+            if (sinceSpawn >= pace.every || (empty && sinceSpawn >= 700)) spawnOne();
+        }, 250);
         return () => clearInterval(iv);
     }, [mode]);
 
@@ -528,19 +566,13 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
             const dt      = Math.min(now - last, 50);
             last = now;
             const shipY   = arenaHRef.current - SHIP_FLOOR;
-            const aW      = arenaWRef.current;
-            const margin  = 110;
             let   penalty = false;
 
             alienRef.current = alienRef.current.map(a => {
                 if (!a.alive || a.hit) return a;
-                const ny  = a.y + a.vy * (dt / 16);
-                let   nx  = a.x + a.vx * (dt / 16);
-                let   nvx = a.vx;
-                if (nx < margin)           { nx = margin;       nvx =  Math.abs(a.vx); }
-                else if (nx > aW - margin) { nx = aW - margin;  nvx = -Math.abs(a.vx); }
-                if (ny > shipY)            { penalty = true; return { ...a, alive: false }; }
-                return { ...a, y: ny, x: nx, vx: nvx };
+                const ny = a.y + a.vy * (dt / 16);
+                if (ny > shipY) { penalty = true; return { ...a, alive: false }; }
+                return { ...a, y: ny };
             });
 
             if (penalty) {
@@ -748,39 +780,40 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
             style={{ backgroundColor: '#04070e', color: '#e2e8f0' }}
         >
             <div
-                className="flex items-center justify-between px-6 py-2.5 text-[11px] tracking-widest shrink-0"
+                className="flex items-center justify-between gap-3 px-3 sm:px-6 py-2 text-[10px] sm:text-[11px] tracking-widest shrink-0"
                 style={{ backgroundColor: '#070b12', borderBottom: `1px solid ${color}35` }}
             >
-                
-                <div className="flex items-center gap-5">
-                    <Logo size={13} className="is-on-dark" />
-                    <span className="opacity-30">|</span>
-                    <span className="opacity-50">SCORE</span>
-                    <span className="font-bold text-base" style={{ color }}>{score.toLocaleString()}</span>
-                    <span className="opacity-30">|</span>
-                    <span className="opacity-50">SPEED</span>
-                    <span className="font-bold">
-                        {liveWpm} <span className="opacity-40 text-[10px]">WPM</span>
+                <div className="flex items-center gap-3 sm:gap-5 min-w-0 overflow-hidden">
+                    <span className="hidden md:inline-flex"><Logo size={13} className="is-on-dark" /></span>
+                    <span className="flex items-baseline gap-1.5">
+                        <span className="hidden sm:inline opacity-50">SCORE</span>
+                        <span className="font-bold text-sm sm:text-base tabular-nums" style={{ color }}>{score.toLocaleString()}</span>
                     </span>
-                    <span className="opacity-30">|</span>
-                    <span className="opacity-50">ACCURACY</span>
-                    <span className="font-bold">
-                        {accuracy}<span className="opacity-40 text-[10px]">%</span>
+                    <span className="flex items-baseline gap-1.5">
+                        <span className="opacity-50">WPM</span>
+                        <span className="font-bold tabular-nums">{liveWpm}</span>
+                    </span>
+                    <span className="hidden sm:flex items-baseline gap-1.5">
+                        <span className="opacity-50">ACC</span>
+                        <span className="font-bold tabular-nums">{accuracy}%</span>
+                    </span>
+                    <span className="hidden sm:flex items-baseline gap-1.5">
+                        <span className="opacity-50">KILLS</span>
+                        <span className="font-bold tabular-nums" style={{ color }}>{defeated}</span>
                     </span>
                     {streak >= STREAK_START && (
-                        <span className="tc-streak-pill" key={streak}>
-                            🔥 STREAK ×{streak} <span className="opacity-70">· 2× PTS</span>
+                        <span className="tc-streak-pill shrink-0" key={streak}>
+                            🔥 ×{streak}<span className="hidden sm:inline opacity-70"> · 2× PTS</span>
                         </span>
                     )}
                 </div>
 
-                <div className="flex items-center gap-5">
-                    <span className="opacity-50">HEALTH</span>
-                    <div className="flex gap-1.5">
+                <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+                    <div className="flex gap-1" title="Lives">
                         {[0, 1, 2].map(i => (
                             <div
                                 key={i}
-                                className="w-5 h-4 rounded-sm transition-all duration-300"
+                                className="w-3.5 h-3 sm:w-5 sm:h-4 rounded-sm transition-all duration-300"
                                 style={{
                                     backgroundColor: i < health ? color : 'rgba(255,255,255,0.08)',
                                     boxShadow:       i < health ? `0 0 8px ${color}` : 'none',
@@ -788,17 +821,12 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                             />
                         ))}
                     </div>
-                    <span className="opacity-30">|</span>
-                    <span className="opacity-50">WAVE</span>
-                    <span className="font-bold" style={{ color }}>{defeated}</span>
-                    <span className="opacity-30">/ ∞</span>
-                    <span className="opacity-30">|</span>
                     <span
-                        className="px-3 py-1 rounded font-bold tabular-nums text-xs"
+                        className="px-2 sm:px-3 py-1 rounded font-bold tabular-nums text-xs"
                         style={{
                             color:  timeLeft <= 15 ? '#ef4444' : color,
                             border: `1px solid ${(timeLeft <= 15 ? '#ef4444' : color)}55`,
-                            minWidth: 52,
+                            minWidth: 48,
                             textAlign: 'center',
                         }}
                     >
@@ -807,17 +835,19 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                     <button
                         onClick={toggleMute}
                         title={muted ? 'Turn sound on' : 'Mute sound'}
-                        className="px-3 py-1 rounded text-[10px] tracking-widest transition-colors"
-                        style={{ color: muted ? '#ef4444' : 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.12)' }}
+                        aria-label={muted ? 'Turn sound on' : 'Mute sound'}
+                        className="hidden sm:inline-block px-2 sm:px-3 py-1 rounded text-[10px] tracking-widest transition-colors"
+                        style={{ color: muted ? '#ef4444' : 'rgba(255,255,255,0.55)', border: '1px solid rgba(255,255,255,0.12)' }}
                     >
-                        {muted ? '🔇 MUTED' : '🔊 SOUND'}
+                        {muted ? '🔇' : '🔊'}
                     </button>
                     <button
                         onClick={togglePause}
-                        className="px-3 py-1 rounded text-[10px] tracking-widest transition-colors"
-                        style={{ color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.12)' }}
+                        aria-label={paused ? 'Resume' : 'Pause'}
+                        className="px-2 sm:px-3 py-1 rounded text-[10px] tracking-widest transition-colors"
+                        style={{ color: 'rgba(255,255,255,0.55)', border: '1px solid rgba(255,255,255,0.12)' }}
                     >
-                        {paused ? '▶ RESUME' : '⏸ PAUSE'}
+                        {paused ? '▶' : '⏸'}<span className="hidden sm:inline">{paused ? ' RESUME' : ' PAUSE'}</span>
                     </button>
                 </div>
             </div>
@@ -887,12 +917,9 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                             backdropFilter: 'blur(6px)',
                         }}
                     >
-                        <div className="text-5xl font-black tracking-widest" style={{ color }}>
+                        <div className="text-4xl sm:text-5xl font-black tracking-widest" style={{ color }}>
                             ⏸ PAUSED
                         </div>
-                        <p className="text-xs tracking-widest opacity-50">
-                            Your session is frozen — no time lost
-                        </p>
                         <button
                             onClick={togglePause}
                             className="font-mono text-sm tracking-widest px-10 py-3 rounded-lg font-bold mt-2"
@@ -901,18 +928,25 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                             ▶ RESUME
                         </button>
                         <button
+                            onClick={toggleMute}
+                            className="font-mono text-xs tracking-widest px-8 py-2.5 rounded"
+                            style={{ color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.15)' }}
+                        >
+                            {muted ? '🔇 SOUND OFF' : '🔊 SOUND ON'}
+                        </button>
+                        <button
                             onClick={onExit}
                             className="font-mono text-xs tracking-widest px-8 py-2.5 rounded"
                             style={{ color: '#ef4444', border: '1px solid #ef444460' }}
                         >
-                            EXIT SESSION
+                            QUIT
                         </button>
                     </div>
                 )}
             </div>
 
             <div
-                className="flex items-center gap-4 px-6 py-3.5 shrink-0"
+                className="flex items-center gap-3 px-3 sm:px-6 py-3 shrink-0"
                 style={{ backgroundColor: '#070b12', borderTop: `1px solid ${color}35` }}
             >
                 <span className="text-base opacity-40">{'>'}</span>
@@ -921,8 +955,8 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                     value={inputVal}
                     onChange={handleInput}
                     disabled={paused || timeLeft <= 0}
-                    placeholder="start typing to target aliens..."
-                    className="flex-grow bg-transparent outline-none text-sm tracking-wide"
+                    placeholder="type an alien's code..."
+                    className="flex-grow min-w-0 bg-transparent outline-none text-base sm:text-sm tracking-wide"
                     style={{
                         color: '#e2e8f0',
                         caretColor: color,
@@ -934,38 +968,22 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                     spellCheck={false}
                 />
                 <div
-                    className="flex items-center gap-4 text-[10px] tracking-widest shrink-0"
+                    className="hidden md:flex items-center gap-3 text-[10px] tracking-widest shrink-0"
                     style={{ color: 'rgba(255,255,255,0.3)' }}
                 >
-                    <span>ESC to pause</span>
-                    <span>•</span>
                     <span style={{ color }}>{mode}</span>
                     <span>•</span>
-                    <span>{playStyle === 'ranked' ? '⚔ RANKED' : '∞ PRACTICE'}</span>
+                    <span>{playStyle === 'ranked' ? 'RANKED' : 'PRACTICE'}</span>
                     <span>•</span>
-                    <span>
-                        DEFEATED: <span style={{ color }}>{defeated}</span>
-                    </span>
-                    <span>•</span>
-                    <span>
-                        ERRORS: <span style={{ color: errors > 5 ? '#ef4444' : 'rgba(255,255,255,0.3)' }}>{errors}</span>
-                    </span>
-                    <button
-                        onClick={onExit}
-                        className="ml-3 px-3 py-1 rounded transition-colors text-[10px]"
-                        style={{ border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.3)' }}
-                        onMouseEnter={e => {
-                            e.currentTarget.style.color = '#ef4444';
-                            e.currentTarget.style.borderColor = '#ef444460';
-                        }}
-                        onMouseLeave={e => {
-                            e.currentTarget.style.color = 'rgba(255,255,255,0.3)';
-                            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';
-                        }}
-                    >
-                        EXIT
-                    </button>
+                    <span>ESC to pause</span>
                 </div>
+                <button
+                    onClick={onExit}
+                    className="px-3 py-1.5 rounded text-[10px] tracking-widest shrink-0 transition-colors hover:text-red-400"
+                    style={{ color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.12)' }}
+                >
+                    EXIT
+                </button>
             </div>
         </div>
     );

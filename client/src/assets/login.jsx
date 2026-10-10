@@ -20,13 +20,6 @@ function EyeOff() {
     );
 }
 
-const FEATURES = [
-    'Real code snippets in HTML, CSS, JS, TS, Python, SQL, Go, C++ and Regex',
-    'Global leaderboard and achievements that update as you play',
-    'Email-verified accounts with optional two-factor sign-in',
-    'Arcade sound effects, streak combos and personal bests',
-];
-
 const inputStyle = {
     backgroundColor: 'var(--bg-input)',
     border: '1px solid var(--border-color)',
@@ -171,7 +164,7 @@ function CodeStep({ title, subtitle, email, purpose, busy, error, info, onSubmit
             <Notice kind="error">{error}</Notice>
             <Notice kind="info">{info}</Notice>
 
-            <Field label="6_DIGIT_CODE">
+            <Field label="6-DIGIT CODE">
                 <input
                     inputMode="numeric"
                     autoComplete="one-time-code"
@@ -383,7 +376,7 @@ export default function Login({ onAuthed, onGuest }) {
                 onResend={resend}
                 onBack={backToSignIn}
                 extra={(
-                    <Field label="NEW_PASSWORD">
+                    <Field label="NEW PASSWORD">
                         <PasswordInput value={newPass} onChange={setNewPass} placeholder="at least 8 characters" autoComplete="new-password" />
                     </Field>
                 )}
@@ -453,8 +446,8 @@ export default function Login({ onAuthed, onGuest }) {
                     </h2>
                     <p className="text-[11px] mt-2 font-mono" style={{ color: 'var(--text-faint)' }}>
                         {isLogin
-                            ? 'Access your stats, records, and leaderboard position.'
-                            : 'Join the developer typing arena and claim your handle.'}
+                            ? 'Welcome back.'
+                            : 'Free account. Your scores get saved.'}
                     </p>
                 </div>
 
@@ -476,7 +469,7 @@ export default function Login({ onAuthed, onGuest }) {
                         </Field>
                     )}
 
-                    <Field label={isLogin ? 'USERNAME_OR_EMAIL' : 'EMAIL'}>
+                    <Field label={isLogin ? 'USERNAME OR EMAIL' : 'EMAIL'}>
                         <input
                             type={isLogin ? 'text' : 'email'}
                             autoComplete={isLogin ? 'username' : 'email'}
@@ -516,20 +509,19 @@ export default function Login({ onAuthed, onGuest }) {
                     </Field>
 
                     {isSignup && (
-                        <Field label="CONFIRM_PASSWORD">
+                        <Field label="CONFIRM PASSWORD">
                             <PasswordInput value={confirm} onChange={setConfirm} placeholder="type it again" autoComplete="new-password" />
                         </Field>
                     )}
 
                     <div className="flex justify-between items-center text-[10px] py-1" style={{ color: 'var(--text-faint)' }}>
                         {isLogin ? (
-                            <Checkbox checked={remember} onChange={setRemember}>REMEMBER_SESSION</Checkbox>
+                            <Checkbox checked={remember} onChange={setRemember}>REMEMBER ME</Checkbox>
                         ) : (
                             <Checkbox checked={terms} onChange={setTerms}>
                                 I agree to the <span style={{ color: 'var(--accent)' }}>Terms</span> &amp; <span style={{ color: 'var(--accent)' }}>Privacy Policy</span>
                             </Checkbox>
                         )}
-                        <span className="tracking-widest">ENCRYPTED</span>
                     </div>
 
                     <button
@@ -548,10 +540,10 @@ export default function Login({ onAuthed, onGuest }) {
                                 className="w-full py-3 rounded tracking-widest flex justify-center gap-2 items-center text-xs mt-2 transition-colors"
                                 style={{ backgroundColor: 'var(--bg-input)', border: '1px solid var(--accent-border)', color: 'var(--accent)' }}
                             >
-                                <span>[</span> PLAY AS GUEST / QUICK PLAY → <span>]</span>
+                                PLAY AS GUEST →
                             </button>
                             <p className="text-center text-[10px] mt-2" style={{ color: 'var(--text-faint)' }}>
-                                No account needed. Guest runs aren't saved to the leaderboard.
+                                Guest runs aren't saved.
                             </p>
                         </>
                     )}
@@ -587,30 +579,21 @@ export default function Login({ onAuthed, onGuest }) {
                         </svg>
                         SPEED &bull; ACCURACY &bull; REAL SYNTAX
                     </div>
-                    <h1 className="text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.05]" style={{ color: 'var(--text-primary)' }}>
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.05]" style={{ color: 'var(--text-primary)' }}>
                         MASTER <br />
                         <span style={{ color: 'var(--accent)' }}>THE</span> <br />
                         KEYBOARD<span style={{ color: 'var(--accent)' }}>.</span>
                     </h1>
                 </div>
 
-                <p className="text-sm md:text-base leading-relaxed max-w-md mt-2" style={{ color: 'var(--text-muted)' }}>
-                    Benchmark real-world programming syntaxes. Build instinctive muscle memory across production-grade snippets, core system keywords, and structural indentation.
+                <p className="text-sm md:text-base leading-relaxed max-w-md" style={{ color: 'var(--text-muted)' }}>
+                    Aliens fall with real code on them. Type the code to shoot them down.
                 </p>
 
-                <ul className="space-y-3 mt-4 font-mono text-xs" style={{ color: 'var(--text-primary)' }}>
-                    {FEATURES.map(item => (
-                        <li key={item} className="flex items-center gap-3">
-                            <span className="font-bold text-base" style={{ color: 'var(--accent)' }}>✓</span>
-                            {item}
-                        </li>
-                    ))}
-                </ul>
-
-                <div className="flex gap-12 mt-6 pt-8" style={{ borderTop: '1px solid var(--border-color)' }}>
+                <div className="flex gap-8 sm:gap-12 pt-6" style={{ borderTop: '1px solid var(--border-color)' }}>
                     <div>
                         <div className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>{compact(stats?.typists)}</div>
-                        <div className="text-[10px] font-mono tracking-widest mt-2 uppercase" style={{ color: 'var(--text-faint)' }}>TYPISTS</div>
+                        <div className="text-[10px] font-mono tracking-widest mt-2 uppercase" style={{ color: 'var(--text-faint)' }}>PLAYERS</div>
                     </div>
                     <div>
                         <div className="text-3xl font-bold">
@@ -621,7 +604,7 @@ export default function Login({ onAuthed, onGuest }) {
                     </div>
                     <div>
                         <div className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>{compact(stats?.testsRun)}</div>
-                        <div className="text-[10px] font-mono tracking-widest mt-2 uppercase" style={{ color: 'var(--text-faint)' }}>TESTS RUN</div>
+                        <div className="text-[10px] font-mono tracking-widest mt-2 uppercase" style={{ color: 'var(--text-faint)' }}>GAMES</div>
                     </div>
                 </div>
             </div>

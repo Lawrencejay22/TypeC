@@ -16,8 +16,6 @@ const STALE_SIGNUP_MS = 24 * 60 * 60 * 1000;
 const DUMMY_HASH = bcrypt.hashSync("this-is-not-anyones-password", 12);
 const WRONG_LOGIN = "Wrong username/email or password.";
 
-router.use(authLimiter);
-
 async function sendCodeQuietly(user, purpose) {
   try {
     await issueCode(user, purpose);
@@ -31,7 +29,7 @@ function findByIdentifier(identifier) {
   return key.includes("@") ? User.findOne({ email: key }) : User.findOne({ usernameKey: key });
 }
 
-router.post("/register", async (req, res) => {
+router.post("/register", authLimiter, async (req, res) => {
   const username = check.username(req.body.username);
   const email = check.email(req.body.email);
   const password = check.password(req.body.password);
@@ -63,7 +61,7 @@ router.post("/register", async (req, res) => {
   });
 });
 
-router.post("/verify", async (req, res) => {
+router.post("/verify", authLimiter, async (req, res) => {
   const email = check.email(req.body.email);
   const code = check.code(req.body.code);
 
@@ -94,7 +92,7 @@ router.post("/resend", codeLimiter, async (req, res) => {
   res.json({ message: "If that account needs a code, a new one is on its way." });
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", authLimiter, async (req, res) => {
   const identifier = check.text(req.body.identifier, { field: "Username or email", max: 254 });
   const password = typeof req.body.password === "string" ? req.body.password : "";
   if (!password) throw badRequest("Password is required.");
@@ -148,7 +146,7 @@ router.post("/login", async (req, res) => {
   res.json({ step: "done", user: user.toSelf() });
 });
 
-router.post("/login/two-factor", async (req, res) => {
+router.post("/login/two-factor", authLimiter, async (req, res) => {
   const email = check.email(req.body.email);
   const code = check.code(req.body.code);
   const remember = req.body.remember === true;
@@ -168,7 +166,7 @@ router.post("/forgot", codeLimiter, async (req, res) => {
   res.json({ message: "If that email has an account, we sent a reset code." });
 });
 
-router.post("/reset", async (req, res) => {
+router.post("/reset", authLimiter, async (req, res) => {
   const email = check.email(req.body.email);
   const code = check.code(req.body.code);
   const password = check.password(req.body.password, "New password");

@@ -18,6 +18,20 @@ const HEADINGS = {
 
 const RELEASES = [
   {
+    version: "v0.6.0",
+    type: "minor",
+    date: "2026-10-10",
+    notes: [
+      "Works properly on phones now, with a menu button and a layout that fits the screen",
+      "Pages open right away instead of waiting on the server",
+      "Aliens fall straight down in their own lanes",
+      "Easy languages spawn aliens slower; hard ones are normal speed",
+      "Fewer steps before a game: pick a language, pick a mode, 3-2-1, go",
+      "Practice runs are just for warming up and aren't saved",
+      "New type_C logo",
+    ],
+  },
+  {
     version: "v0.5.0",
     type: "minor",
     date: "2026-10-10",
@@ -114,7 +128,7 @@ const HELP_CARDS = [
   {
     icon: "💀",
     title: "Lives & game over",
-    text: "Each alien that reaches the bottom costs you one life. Lose all three and the mission ends — your score is tallied and saved (if logged in).",
+    text: "Each alien that reaches the bottom costs you one life. Lose all three and the game ends. Ranked runs are saved when you're signed in.",
   },
   {
     icon: "🌐",

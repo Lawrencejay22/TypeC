@@ -86,6 +86,21 @@
   }
 }
 
+@media (max-width: 640px) {
+  .tc-toasts {
+    top: auto;
+    right: 12px;
+    bottom: 76px;
+    left: 12px;
+  }
+
+  .tc-toast {
+    min-width: 0;
+    max-width: none;
+    padding: 10px 14px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tc-toast {
     animation: none;

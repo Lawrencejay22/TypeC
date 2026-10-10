@@ -6,6 +6,7 @@ import MatrixBg from "./component/MatrixBg.jsx";
 import Avatar from "./component/Avatar.jsx";
 import { get, post, del } from "../api.js";
 import { toast } from "../toasts.js";
+import { useSlow, WAKE_NOTE } from "../live.js";
 import "./leaderboard.css";
 
 const PODIUM_ORDER = [1, 0, 2];
@@ -66,6 +67,7 @@ export default function Leaderboard({ user, onViewProfile, onSignIn }) {
   const [activePlayer, setActivePlayer] = useState(null);
   const [busy, setBusy] = useState(null);
   const [, setTick] = useState(0);
+  const slow = useSlow(players === null && !error);
 
   const load = useCallback(async () => {
     try {
@@ -164,7 +166,7 @@ export default function Leaderboard({ user, onViewProfile, onSignIn }) {
 
       <p className="lb-live">
         <span className={`lb-live-dot ${error ? "is-down" : ""}`} />
-        {error ? `Offline · ${error}` : players ? `Live · ranked by average WPM · updated ${timeAgo(updatedAt)}` : "Loading the rankings..."}
+        {error ? `Offline · ${error}` : players ? `Live · ranked by average WPM · updated ${timeAgo(updatedAt)}` : slow ? WAKE_NOTE : "Loading the rankings..."}
       </p>
 
       <div className="lb-board">

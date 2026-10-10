@@ -4,6 +4,7 @@ import Avatar from "./component/Avatar.jsx";
 import { get, post, patch, del } from "../api.js";
 import { getSoundPrefs, setSoundPrefs, onSoundPrefs, sfx } from "../sound.js";
 import { toast } from "../toasts.js";
+import { useSlow, WAKE_NOTE } from "../live.js";
 import "./profile.css";
 
 const BASE_TABS = [
@@ -673,6 +674,7 @@ export default function Profile({ user, username, onBack, onSignIn, onUserChange
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
   const [followBusy, setFollowBusy] = useState(false);
+  const slow = useSlow(!data && !error);
 
   const isPublic = Boolean(username);
   const path = isPublic ? `/users/${encodeURIComponent(username)}` : user ? "/users/me" : null;
@@ -752,7 +754,7 @@ export default function Profile({ user, username, onBack, onSignIn, onUserChange
       </div>
     );
   } else if (!data) {
-    body = <p className="tc-page-note">Loading profile...</p>;
+    body = <p className="tc-page-note">{slow ? WAKE_NOTE : "Loading profile..."}</p>;
   } else if (activeTab === "overview") {
     body = <Overview data={data} signedIn={Boolean(user)} onFollow={toggleFollow} followBusy={followBusy} />;
   } else if (activeTab === "history") {

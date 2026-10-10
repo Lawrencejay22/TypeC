@@ -213,15 +213,146 @@
   color: #ef4444;
 }
 
+.tc-header .tc-menu-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 36px;
+  height: 32px;
+  margin-left: 12px;
+  padding: 0 9px;
+  border: 1px solid var(--h-btn-border);
+  border-radius: 4px;
+}
+
+.tc-menu-btn span {
+  display: block;
+  height: 2px;
+  background: var(--h-link-active);
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.is-menu-open .tc-menu-btn span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.is-menu-open .tc-menu-btn span:nth-child(2) {
+  opacity: 0;
+}
+
+.is-menu-open .tc-menu-btn span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.tc-menu-backdrop {
+  position: fixed;
+  inset: 65px 0 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.tc-menu {
+  position: absolute;
+  top: 65px;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 16px 16px;
+  background: #0d121b;
+  border-bottom: 1px solid var(--h-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.35);
+}
+
+:root.light .tc-menu {
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.08);
+}
+
+.tc-header .tc-menu button {
+  padding: 13px 4px;
+  font-size: 14px;
+  text-align: left;
+  color: var(--h-link);
+  border-bottom: 1px solid var(--h-border);
+}
+
+.tc-header .tc-menu button.is-active {
+  color: var(--h-accent);
+}
+
+.tc-header .tc-menu button.is-muted {
+  color: var(--h-muted);
+}
+
+.tc-menu-rule {
+  height: 8px;
+}
+
+.tc-menu-online {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 4px 0;
+  font-size: 11px;
+  color: var(--h-muted);
+}
+
+@media (min-width: 901px) {
+  .tc-menu,
+  .tc-menu-backdrop {
+    display: none;
+  }
+}
+
 @media (max-width: 900px) {
   .tc-nav {
     display: none;
+  }
+
+  .tc-header .tc-menu-btn {
+    display: flex;
   }
 }
 
 @media (max-width: 560px) {
   .tc-header {
     padding: 0 16px;
+  }
+
+  .tc-header .tc-signout,
+  .tc-divider {
+    display: none;
+  }
+
+  .tc-header .tc-profile {
+    display: block;
+    max-width: 128px;
+    margin-left: 8px;
+    padding: 5px 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tc-header .tc-profile-avatar,
+  .tc-theme-label {
+    display: none;
+  }
+
+  .tc-header .tc-theme {
+    padding: 5px 9px;
+  }
+
+  .tc-header .tc-menu-btn {
+    margin-left: 8px;
+  }
+
+  .tc-brand {
+    flex-shrink: 0;
   }
 
   .tc-online {
