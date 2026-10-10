@@ -4,10 +4,10 @@ import Result from "../models/Result.js";
 import { badgeList, earnedIcons } from "./badges.js";
 
 const GRADES = [
-  { label: "S-TIER", min: 90 },
-  { label: "A-TIER", min: 75 },
-  { label: "B-TIER", min: 55 },
-  { label: "C-TIER", min: 35 },
+  { label: "S-TIER", min: 80 },
+  { label: "A-TIER", min: 60 },
+  { label: "B-TIER", min: 40 },
+  { label: "C-TIER", min: 25 },
   { label: "D-TIER", min: 0 },
 ];
 

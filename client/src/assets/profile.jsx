@@ -8,12 +8,12 @@ import { useSlow, WAKE_NOTE } from "../live.js";
 import "./profile.css";
 
 const BASE_TABS = [
-  { key: "overview", icon: "📊", label: "Overview" },
-  { key: "history", icon: "🕹", label: "History" },
-  { key: "badges", icon: "🎖", label: "Badges" },
+  { key: "overview", label: "Overview" },
+  { key: "history", label: "History" },
+  { key: "badges", label: "Badges" },
 ];
 
-const SETTINGS_TAB = { key: "settings", icon: "⚙", label: "Settings" };
+const SETTINGS_TAB = { key: "settings", label: "Settings" };
 
 const MODES = {
   HTML: { label: "HTML", color: "#e34f26" },

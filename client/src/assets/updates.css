@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 672px;
 }
 
 .up-faq,
@@ -135,8 +134,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
-  max-width: 768px;
-  align-items: start;
+  align-items: stretch;
 }
 
 .up-help-card {

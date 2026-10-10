@@ -118,7 +118,7 @@ export default function Leaderboard({ user, onViewProfile, onSignIn }) {
   };
 
   const list = players || [];
-  const podium = PODIUM_ORDER.map((i) => list[i] && { ...list[i], rank: i + 1 }).filter(Boolean);
+  const podium = PODIUM_ORDER.map((i) => (list[i] ? { ...list[i], rank: i + 1 } : { empty: true, rank: i + 1 }));
   const rest = list.slice(3).map((p, i) => ({ ...p, rank: i + 4 }));
 
   const hoverProps = (name) => ({
@@ -189,9 +189,14 @@ export default function Leaderboard({ user, onViewProfile, onSignIn }) {
           </div>
         )}
 
-        {podium.length > 0 && (
+        {list.length > 0 && (
           <div className="lb-podium">
-            {podium.map((player) => (
+            {podium.map((player) => player.empty ? (
+              <div key={`empty-${player.rank}`} className={`lb-podium-card rank-${player.rank} is-empty`}>
+                <p className="lb-podium-rank">#{player.rank}</p>
+                <p className="lb-empty-spot">Open spot. Play a ranked run to take it.</p>
+              </div>
+            ) : (
               <div
                 key={player.username}
                 className={`lb-podium-card rank-${player.rank} ${activePlayer === player.username ? "is-active" : ""} ${player.isYou ? "is-you" : ""}`}

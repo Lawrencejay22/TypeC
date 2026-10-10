@@ -38,7 +38,7 @@ export default function PageShell({
                 className={`tc-tab ${activeTab === tab.key ? "is-active" : ""}`}
                 onClick={() => onTabChange && onTabChange(tab.key)}
               >
-                {tab.icon} {tab.label}
+                {tab.label}
               </button>
             ))}
           </div>

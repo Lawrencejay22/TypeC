@@ -3,10 +3,10 @@ import PageShell from "./component/PageShell.jsx";
 import "./updates.css";
 
 const TABS = [
-  { key: "pack", icon: "📦", label: "Pack" },
-  { key: "faq", icon: "❓", label: "FAQ" },
-  { key: "help", icon: "🛟", label: "Help" },
-  { key: "demo", icon: "🎮", label: "Demo" },
+  { key: "pack", label: "Updates" },
+  { key: "faq", label: "FAQ" },
+  { key: "help", label: "Help" },
+  { key: "demo", label: "Demo" },
 ];
 
 const HEADINGS = {
@@ -28,6 +28,7 @@ const RELEASES = [
       "Easy languages spawn aliens slower; hard ones are normal speed",
       "Fewer steps before a game: pick a language, pick a mode, 3-2-1, go",
       "Practice runs are just for warming up and aren't saved",
+      "Grades are easier to reach, and Practice grades more gently than Ranked",
       "New type_C logo",
     ],
   },

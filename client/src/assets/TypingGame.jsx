@@ -174,16 +174,14 @@ const LANG_COLOR = {
     RANDOM: '#a855f7',
 };
 
-const RANK_THRESHOLDS = [
-    { label: 'S-TIER', min: 90 },
-    { label: 'A-TIER', min: 75 },
-    { label: 'B-TIER', min: 55 },
-    { label: 'C-TIER', min: 35 },
-    { label: 'D-TIER', min: 0  },
-];
+const GRADES = {
+    ranked:   [['S-TIER', 80], ['A-TIER', 60], ['B-TIER', 40], ['C-TIER', 25]],
+    practice: [['S-TIER', 60], ['A-TIER', 45], ['B-TIER', 30], ['C-TIER', 15]],
+};
 
-function getRank(wpm) {
-    return RANK_THRESHOLDS.find(r => wpm >= r.min)?.label ?? 'D-TIER';
+function getRank(wpm, playStyle) {
+    const scale = GRADES[playStyle] || GRADES.ranked;
+    return scale.find(([, min]) => wpm >= min)?.[0] ?? 'D-TIER';
 }
 
 const TIER = {
@@ -626,7 +624,7 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
             chars:       totalRef.current,
             bestStreak:  bestStreakRef.current,
             timeElapsed: elapsed,
-            rank:        getRank(Math.max(0, wpm)),
+            rank:        getRank(Math.max(0, wpm), playStyle),
             mode,
             playStyle,
         });

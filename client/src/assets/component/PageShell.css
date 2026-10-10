@@ -31,7 +31,7 @@
 
   position: relative;
   width: 100%;
-  max-width: 1500px;
+  max-width: 1040px;
   margin: 0 auto;
   align-self: stretch;
   font-family: 'JetBrains Mono', monospace;
@@ -132,7 +132,7 @@
 }
 
 .tc-tab {
-  padding: 10px 24px;
+  padding: 12px 20px;
   font: inherit;
   font-size: 12px;
   font-weight: 700;

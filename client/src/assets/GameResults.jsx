@@ -104,11 +104,12 @@ export default function GameResults({ stats, save, signedIn, onRetry, onBackToSe
     const minutes = Math.floor(timeElapsed / 60);
     const secs    = String(timeElapsed % 60).padStart(2, '0');
 
-    const message = wpm >= 90 ? 'Flawless.' :
-                    wpm >= 70 ? 'Great run.' :
-                    wpm >= 50 ? 'Solid.' :
-                    wpm >= 30 ? 'Keep going.' :
-                                'Warm-up done.';
+    const message = {
+        'S-TIER': 'Flawless.',
+        'A-TIER': 'Great run.',
+        'B-TIER': 'Solid.',
+        'C-TIER': 'Keep going.',
+    }[rank] || 'Warm-up done.';
 
     return (
         <div className="w-full max-w-3xl mx-auto py-2 sm:py-6">

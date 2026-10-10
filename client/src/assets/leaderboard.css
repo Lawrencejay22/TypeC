@@ -16,7 +16,7 @@
 
   position: relative;
   width: 100%;
-  max-width: 1500px;
+  max-width: 1180px;
   margin: 0 auto;
   padding: 4px 0 24px;
   font-family: 'JetBrains Mono', monospace;
@@ -496,5 +496,31 @@
   .lb-live-dot,
   .lb-skeleton {
     animation: none;
+  }
+}
+
+.lb-podium-card.is-empty {
+  justify-content: center;
+  gap: 10px;
+  cursor: default;
+  border-style: dashed;
+  opacity: 0.55;
+}
+
+.lb-podium-card.is-empty:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.lb-empty-spot {
+  margin: 0;
+  font-size: 13px;
+  color: var(--lb-muted);
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .lb-podium-card.is-empty {
+    display: none;
   }
 }
