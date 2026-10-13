@@ -18,6 +18,18 @@ const HEADINGS = {
 
 const RELEASES = [
   {
+    version: "v0.7.0",
+    type: "minor",
+    date: "2026-10-13",
+    notes: [
+      "Categories: practice just variables, functions, logic or data, or pick Mixed",
+      "Rounds of 15 or 30 seconds, each with its own category and a short break before the next",
+      "Aliens get a little faster every round, up to a speed limit",
+      "New skills: Shield, Freeze and Slowmo, recharged by 10-kill streaks",
+      "Over 260 rewritten code snippets, sorted by category",
+    ],
+  },
+  {
     version: "v0.6.0",
     type: "minor",
     date: "2026-10-10",
@@ -81,6 +93,14 @@ const RELEASES = [
 
 const FAQS = [
   {
+    q: "What are categories and rounds?",
+    a: "Before you play, pick a category like Variables or Functions, or Mixed. A game is split into rounds of 15 or 30 seconds. With Mixed, every round switches to a new category, and a banner tells you which one is coming so you're never guessing.",
+  },
+  {
+    q: "How do skills work?",
+    a: "You start with one Shield, one Freeze and one Slowmo. Press the left, up or right arrow, or tap the buttons next to the typing box. Every 10 clean kills in a row gives you another charge.",
+  },
+  {
     q: "How do I target a specific alien?",
     a: "Start typing — the first character locks onto the lowest (most dangerous) alien whose word starts with that letter. A green glow ring confirms the lock. Finish the word to destroy it.",
   },
@@ -111,6 +131,16 @@ const FAQS = [
 ];
 
 const HELP_CARDS = [
+  {
+    icon: "🗂",
+    title: "Categories & rounds",
+    text: "Pick one category to drill, or Mixed to switch every round. Rounds are 15 or 30 seconds with a short break between them, and aliens speed up a little each round until they hit the speed limit.",
+  },
+  {
+    icon: "🛡",
+    title: "Skills",
+    text: "← Shield blocks one alien that gets through. ↑ Freeze stops all aliens for 5 seconds. → Slowmo halves their speed for 8 seconds. You get one of each, plus a charge every 10-kill streak.",
+  },
   {
     icon: "⌨",
     title: "Typing controls",

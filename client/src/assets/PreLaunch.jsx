@@ -27,7 +27,7 @@ const modeColors = {
     RANDOM:       '#a855f7',
 };
 
-const TIP = 'Type the code on an alien to shoot it.';
+const TIP = 'Type the code on an alien to shoot it. Arrow keys use skills.';
 
 export default function PreLaunch({ mode, onReady, onLaunch, onBack }) {
     const [countdown, setCountdown] = useState(3);

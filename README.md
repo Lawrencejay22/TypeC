@@ -10,15 +10,26 @@ We made this for our class project because regular typing tests only have plain 
 
 1. Sign up, or just hit **Play as guest**.
 2. Pick a language. Easy ones (HTML, CSS, JavaScript) drop aliens slowly. Hard ones (Go, C++, Regex) drop more of them.
-3. Pick **Practice** to warm up, or **Ranked** if you want the run saved.
-4. Type the code on any alien. Once you start typing, it locks on to the closest match.
-5. Get 5 kills in a row without a mistake and your points double until you slip.
+3. Pick a category, like Variables or Functions, or choose **Mixed**. Then pick how long each round is: 15 or 30 seconds.
+4. Pick **Practice** to warm up, or **Ranked** if you want the run saved.
+5. Type the code on any alien. Once you start typing, it locks on to the closest match.
+6. Get 5 kills in a row without a mistake and your points double until you slip.
 
-Each game is 90 seconds. Press `Esc` to pause.
+Each game is 90 seconds, split into rounds. With Mixed, every round brings a new category, and a banner shows which one is next. There's a short break between rounds, and aliens get a little faster each round, up to a speed limit.
+
+**Skills.** You start with one of each, and every 10 clean kills in a row earns another charge.
+
+| Key | Skill | What it does |
+|---|---|---|
+| ← | Shield | Blocks the next alien that reaches the bottom |
+| ↑ | Freeze | Stops every alien for 5 seconds |
+| → | Slowmo | Aliens move at half speed for 8 seconds |
+
+On a phone, tap the skill buttons next to the typing box. Press `Esc` to pause.
 
 ## What's in it
 
-- 9 languages plus a random mix
+- 9 languages plus a random mix, each split into categories
 - Accounts with email verification, and optional two-factor sign-in
 - Live leaderboard, ranked by average WPM
 - Badges that get unlocked and saved when you hit certain goals

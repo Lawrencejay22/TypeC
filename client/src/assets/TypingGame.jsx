@@ -2,170 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { sfx, getSoundPrefs, setSoundPrefs, onSoundPrefs } from '../sound.js';
 import { toast } from '../toasts.js';
 import Logo from './component/Logo.jsx';
-
-const SNIPPETS = {
-    HTML: [
-        '<div class="hero">','<section id="main">','<h1>Hello World</h1>',
-        '<nav class="header">','<ul class="list">','<a href="#top">',
-        '<img src="logo.png" />','<footer class="site-footer">',
-        '<input type="text" />','<button type="submit">',
-        '<form action="/submit">','<label for="email">',
-        '<span class="badge">','<table class="data-table">',
-        '<thead><tr><th>Name</th>','<meta charset="UTF-8">',
-        '<link rel="stylesheet">','<article class="post">',
-        '<aside class="sidebar">','<video controls autoplay>',
-        '<canvas id="stage">','<dialog open>',
-        '<details><summary>','<progress value="70">',
-        '<time datetime="2026">',
-    ],
-    CSS: [
-        'display: flex;','margin: 0 auto;','border-radius: 8px;',
-        'font-size: 1.25rem;','background-color: #fff;','padding: 16px 24px;',
-        'justify-content: center;','grid-template-columns: 1fr 1fr;',
-        'transition: all 0.3s ease;','box-shadow: 0 4px 12px rgba(0,0,0,.1);',
-        'position: absolute;','transform: translateX(-50%);',
-        'align-items: center;','gap: 1rem;','overflow: hidden;',
-        'z-index: 10;','backdrop-filter: blur(8px);','animation: fadeIn 0.3s;',
-        '@keyframes spin {','from { transform: rotate(0deg) }',
-        ':root { --color: #00E572; }','color: var(--color);',
-        'width: clamp(200px, 50%, 800px);','aspect-ratio: 16 / 9;',
-        'scroll-behavior: smooth;',
-    ],
-    JAVASCRIPT: [
-        'const arr = [];','async function load()','arr.map(x => x * 2)',
-        'const { name } = obj;','Promise.resolve(data)',
-        'export default function','document.querySelector(',
-        'addEventListener("click",','JSON.parse(response)',
-        'import React from "react"','const [state, setState] =',
-        'useEffect(() => {','fetch("/api/data")','.then(res => res.json())',
-        'Object.entries(obj)','Array.from(set)',
-        'try { await fn() }','catch (err) { console.error(err) }',
-        'new Promise((resolve) =>','setTimeout(() => {}, 0)',
-        'localStorage.setItem(','class EventEmitter {',
-        'structuredClone(data)','crypto.randomUUID()',
-        'new URLSearchParams(',
-    ],
-    TYPESCRIPT: [
-        'interface User {','type Props = {','const fn = <T>(x: T)',
-        'Record<string, number>','Partial<UserProps>','enum Status {',
-        'readonly id: string;','extends React.FC<Props>',
-        'as unknown as string','satisfies Config',
-        'type Union = A | B;','keyof typeof obj',
-        'infer R extends string','NonNullable<T>',
-        'ReturnType<typeof fn>','declare module "*.svg"',
-        'namespace Utils {','abstract class Base {',
-        'protected readonly name:','constructor(private id:',
-        'override toString()','never','unknown',
-        'Awaited<ReturnType<','Extract<T, string>',
-    ],
-    PYTHON: [
-        'def __init__(self):','return [x for x in','async def fetch():',
-        '@dataclass','with open(file) as f:','lambda x: x * 2',
-        'if __name__ == "__main__":','raise ValueError(msg)',
-        'yield from items','from typing import List',
-        'from pathlib import Path','import asyncio',
-        '@staticmethod','@classmethod','@property',
-        'class Meta:','__slots__ = ()','super().__init__()',
-        'dict | None','match command:','case "quit":','case _:',
-        'f"{name!r}"','Protocol:','TypeVar("T")',
-    ],
-    'SQL & RUST': [
-        'SELECT * FROM users','WHERE id = $1','fn main() {',
-        'let mut vec = Vec::new();','impl Display for',
-        'JOIN orders ON id','GROUP BY user_id','Result<(), Error>',
-        'WITH cte AS (','ORDER BY created_at DESC','LIMIT 20 OFFSET 0',
-        'INSERT INTO users (name)','UPDATE users SET active =',
-        'DELETE FROM sessions','RETURNING id, created_at',
-        'pub fn new() -> Self {','#[derive(Debug, Clone)]',
-        'Box<dyn Error>','Arc::new(Mutex::new(',
-        'match self {','_ => unreachable!()',
-        'unwrap_or_else(|e|','use std::collections::HashMap;',
-        'tokio::spawn(async move {','sqlx::query_as!(',
-    ],
-    GO: [
-        'func main() {',
-        'fmt.Println("hello")',
-        'go func() {',
-        'defer wg.Done()',
-        'chan struct{}',
-        'select {',
-        'case msg := <-ch:',
-        'var mu sync.Mutex',
-        'mu.Lock()',
-        'mu.Unlock()',
-        'if err != nil {',
-        'return nil, err',
-        'type Handler interface {',
-        'func (h *Handler)',
-        'context.WithCancel(',
-        'http.HandleFunc(',
-        'json.Unmarshal(data,',
-        'os.Getenv("PORT")',
-        'log.Fatalf("%v", err)',
-        'make(chan int, 10)',
-        'for range ticker.C {',
-        'sync.WaitGroup{}',
-        'atomic.AddInt64(',
-        'errors.New("not found")',
-        'io.ReadAll(r.Body)',
-    ],
-    'C++': [
-        '#include <iostream>',
-        'std::cout << "hi";',
-        'template <typename T>',
-        'auto lambda = [&]() {',
-        'std::vector<int> v;',
-        'v.emplace_back(42);',
-        'std::unique_ptr<T>',
-        'std::make_shared<T>(',
-        'const auto& [k, v]',
-        'std::string_view sv',
-        'if constexpr (std::is)',
-        'noexcept(true)',
-        'virtual ~Base() = 0;',
-        'override {}',
-        'nullptr',
-        'std::move(obj)',
-        'std::forward<T>(arg)',
-        'static_cast<int>(x)',
-        'reinterpret_cast<T>(',
-        '[[nodiscard]]',
-        'std::optional<T>',
-        'std::variant<A, B>',
-        'co_await future',
-        'std::span<int> s',
-        'std::ranges::sort(v)',
-    ],
-    REGEX: [
-        '^[a-zA-Z0-9]+$',
-        '\\d{4}-\\d{2}-\\d{2}',
-        '^(https?:\\/\\/)',
-        '[a-z0-9._%+-]+@',
-        '(?<=\\s|^)\\w+',
-        '(?=.*[A-Z])',
-        '(\\w+)\\s+\\1',
-        '^\\+?[1-9]\\d{1,14}$',
-        '<([a-z]+)[^>]*>',
-        '(?:foo|bar|baz)',
-        '\\b(?!\\d)\\w+\\b',
-        '^(?!.*script)',
-        '[^\\x00-\\x7F]+',
-        '(?<year>\\d{4})',
-        '(?<!\\\\)"',
-        '^[\\w.-]+@[\\w.-]+\\.\\w{2,}$',
-        '\\\\n|\\\\r\\\\n',
-        'rgb\\((\\d+),\\s*(\\d+)',
-        '^#([A-Fa-f0-9]{6})',
-        '(?:^|\\s)@(\\w{1,15})',
-        '\\b(\\d+\\.\\d+\\.\\d+)',
-        '^(?=.*\\d)[A-Za-z\\d]{8,}$',
-        '\\bISBN(?:-1[03])?:?',
-        '(?<=\\.)(\\w+)(?=\\()',
-        '[\\uD83D\\uDE00-\\uD83D\\uDE4F]',
-    ],
-};
-
-const ALL_LANGUAGES = Object.keys(SNIPPETS);
+import { roundPlan, pickSnippet } from './snippets.js';
 
 const LANG_COLOR = {
     HTML: '#f97316', CSS: '#3b82f6', JAVASCRIPT: '#facc15',
@@ -196,6 +33,22 @@ const PACE = {
     hard:   { every: 2200, maxAlive: 5, fallSeconds: 26 },
 };
 
+const SPEED_STEP = 0.08;
+const SPEED_LIMIT = 1.3;
+const FIRST_BREAK = 600;
+const ROUND_BREAK = 2000;
+
+const SKILLS = {
+    shield: { icon: '🛡', name: 'Shield', key: 'ArrowLeft', hint: '←', seconds: 20, color: '#38bdf8', text: 'Blocks the next alien that gets through' },
+    freeze: { icon: '❄', name: 'Freeze', key: 'ArrowUp', hint: '↑', seconds: 5, color: '#a5f3fc', text: 'Stops every alien for 5 seconds' },
+    slowmo: { icon: '🐢', name: 'Slowmo', key: 'ArrowRight', hint: '→', seconds: 8, color: '#c084fc', text: 'Aliens move at half speed for 8 seconds' },
+};
+const SKILL_ORDER = ['shield', 'freeze', 'slowmo'];
+const SKILL_KEYS = Object.fromEntries(SKILL_ORDER.map((k) => [SKILLS[k].key, k]));
+const SKILL_MAX = 2;
+const RECHARGE_EVERY = 10;
+const SLOWMO_SPEED = 0.5;
+
 const LANE_WIDTH = 300;
 const EDGE = 24;
 
@@ -211,9 +64,9 @@ function pickLane(aliens, arenaW) {
     return { lane, x: EDGE + width * (lane + 0.5) };
 }
 
-function makeAlien(id, snippet, lang, spot, arenaH, pace) {
+function makeAlien(id, snippet, lang, spot, arenaH, pace, ramp) {
     const travel = Math.max(arenaH, 300) + 80;
-    const seconds = pace.fallSeconds * (0.9 + Math.random() * 0.2);
+    const seconds = (pace.fallSeconds / ramp) * (0.9 + Math.random() * 0.2);
     return {
         id, snippet, typed: '', lang,
         lane: spot.lane,
@@ -466,17 +319,7 @@ const Stars = React.memo(function Stars() {
 const DURATION   = 90;
 const SHIP_FLOOR = 68;
 
-function pickSnippet(mode) {
-    if (mode === 'RANDOM') {
-        const lang = ALL_LANGUAGES[Math.floor(Math.random() * ALL_LANGUAGES.length)];
-        const bank = SNIPPETS[lang];
-        return { snippet: bank[Math.floor(Math.random() * bank.length)], lang };
-    }
-    const bank = SNIPPETS[mode] || SNIPPETS.HTML;
-    return { snippet: bank[Math.floor(Math.random() * bank.length)], lang: mode };
-}
-
-export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
+export default function TypingGame({ mode, playStyle, category = 'mixed', roundSeconds = 30, onGameOver, onExit }) {
     const color    = LANG_COLOR[mode] || '#00E572';
 
     const arenaRef       = useRef(null);
@@ -499,6 +342,9 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
     const lockedRef      = useRef(null);
     const boomIdRef      = useRef(0);
     const gameOverRef    = useRef(null);
+    const effectsRef     = useRef({ shield: 0, freeze: 0, slowmo: 0 });
+    const chargesRef     = useRef({ shield: 1, freeze: 1, slowmo: 1 });
+    const planRef        = useRef(roundPlan(mode, category));
 
     const [arenaW,     setArenaW]     = useState(window.innerWidth);
     const [,           setArenaH]     = useState(window.innerHeight);
@@ -517,6 +363,10 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
     const [booms,      setBooms]      = useState([]);
     const [hitFlash,   setHitFlash]   = useState(0);
     const [muted,      setMuted]      = useState(() => getSoundPrefs().muted);
+    const [effects,    setEffects]    = useState({ shield: 0, freeze: 0, slowmo: 0 });
+    const [charges,    setCharges]    = useState(chargesRef.current);
+    const [round,      setRound]      = useState(null);
+    const [shieldHit,  setShieldHit]  = useState(0);
 
     useEffect(() => onSoundPrefs((prefs) => setMuted(prefs.muted)), []);
 
@@ -534,27 +384,50 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
 
     useEffect(() => {
         const pace = PACE[TIER[mode] || 'medium'];
+        const plan = roundPlan(mode, category);
+        const roundMs = roundSeconds * 1000;
+        const total = Math.ceil(DURATION / roundSeconds);
+        planRef.current = plan;
         let sinceSpawn = 0;
+        let elapsed = 0;
+        let current = -1;
+
+        const rampFor = (index) => Math.min(1 + index * SPEED_STEP, SPEED_LIMIT);
+
+        function startRound(index) {
+            current = index;
+            sinceSpawn = 0;
+            setRound({ index, total, info: plan[index % plan.length] });
+            if (index > 0) sfx.round();
+        }
+
         function spawnOne() {
             const alive = alienRef.current.filter(a => a.alive && !a.hit);
             if (alive.length >= pace.maxAlive) return;
             const spot = pickLane(alive, arenaWRef.current);
             if (!spot) return;
-            const { snippet, lang } = pickSnippet(mode);
-            const alien = makeAlien(alienIdRef.current++, snippet, lang, spot, arenaHRef.current - SHIP_FLOOR, pace);
+            const { snippet, lang } = pickSnippet(mode, plan[current % plan.length].key);
+            const alien = makeAlien(alienIdRef.current++, snippet, lang, spot, arenaHRef.current - SHIP_FLOOR, pace, rampFor(current));
             alienRef.current = [...alienRef.current, alien];
             setAliens([...alienRef.current]);
             sinceSpawn = 0;
         }
-        spawnOne();
+
+        startRound(0);
         const iv = setInterval(() => {
             if (pausedRef.current || timeRef.current <= 0) return;
-            sinceSpawn += 250;
+            elapsed += 250;
+            const index = Math.min(Math.floor(elapsed / roundMs), total - 1);
+            if (index !== current) startRound(index);
+            const breakMs = current === 0 ? FIRST_BREAK : ROUND_BREAK;
+            if (elapsed - current * roundMs < breakMs) return;
+            if (effectsRef.current.freeze > 0) return;
+            sinceSpawn += effectsRef.current.slowmo > 0 ? 250 * SLOWMO_SPEED : 250;
             const empty = !alienRef.current.some(a => a.alive && !a.hit);
-            if (sinceSpawn >= pace.every || (empty && sinceSpawn >= 700)) spawnOne();
+            if (sinceSpawn >= pace.every / rampFor(current) || (empty && sinceSpawn >= 700)) spawnOne();
         }, 250);
         return () => clearInterval(iv);
-    }, [mode]);
+    }, [mode, category, roundSeconds]);
 
     useEffect(() => {
         let last = performance.now();
@@ -564,17 +437,29 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
             const dt      = Math.min(now - last, 50);
             last = now;
             const shipY   = arenaHRef.current - SHIP_FLOOR;
-            let   penalty = false;
+            const fx      = effectsRef.current;
+            const speed   = fx.freeze > 0 ? 0 : fx.slowmo > 0 ? SLOWMO_SPEED : 1;
+            fx.freeze = Math.max(0, fx.freeze - dt);
+            fx.slowmo = Math.max(0, fx.slowmo - dt);
+            fx.shield = Math.max(0, fx.shield - dt);
+            let crossed = 0;
 
             alienRef.current = alienRef.current.map(a => {
                 if (!a.alive || a.hit) return a;
-                const ny = a.y + a.vy * (dt / 16);
-                if (ny > shipY) { penalty = true; return { ...a, alive: false }; }
+                const ny = a.y + a.vy * speed * (dt / 16);
+                if (ny > shipY) { crossed += 1; return { ...a, alive: false }; }
                 return { ...a, y: ny };
             });
 
-            if (penalty) {
-                const h = Math.max(0, healthRef.current - 1);
+            if (crossed > 0 && fx.shield > 0) {
+                fx.shield = 0;
+                crossed -= 1;
+                sfx.shieldBreak();
+                setShieldHit(n => n + 1);
+            }
+
+            if (crossed > 0) {
+                const h = Math.max(0, healthRef.current - crossed);
                 healthRef.current = h;
                 setHealth(h);
                 sfx.hit();
@@ -586,6 +471,7 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                 }
             }
 
+            setEffects({ ...fx });
             setAliens([...alienRef.current]);
         }
         frameRef.current = requestAnimationFrame(tick);
@@ -627,6 +513,7 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
             rank:        getRank(Math.max(0, wpm), playStyle),
             mode,
             playStyle,
+            category:    planRef.current.length === 1 ? planRef.current[0].label : 'Mixed',
         });
     }, [mode, playStyle, onGameOver]);
 
@@ -640,11 +527,48 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
         setStreak(0);
     }
 
+    function rechargeSkill() {
+        const owned = chargesRef.current;
+        const key = [...SKILL_ORDER].sort((a, b) => owned[a] - owned[b])[0];
+        if (owned[key] >= SKILL_MAX) return;
+        chargesRef.current = { ...owned, [key]: owned[key] + 1 };
+        setCharges(chargesRef.current);
+        toast({
+            kind: 'streak',
+            icon: SKILLS[key].icon,
+            label: 'SKILL CHARGED',
+            title: `+1 ${SKILLS[key].name}`,
+            text: `Press ${SKILLS[key].hint} or tap it to use.`,
+            duration: 2400,
+        });
+    }
+
+    function activateSkill(key) {
+        if (pausedRef.current || timeRef.current <= 0 || gameOverCalled.current) return;
+        const fx = effectsRef.current;
+        if (chargesRef.current[key] <= 0 || fx[key] > 0) {
+            sfx.miss();
+            return;
+        }
+        chargesRef.current = { ...chargesRef.current, [key]: chargesRef.current[key] - 1 };
+        setCharges(chargesRef.current);
+        fx[key] = SKILLS[key].seconds * 1000;
+        setEffects({ ...fx });
+        sfx.skill(key);
+        inputRef.current?.focus();
+    }
+
+    const skillRef = useRef(activateSkill);
+    useEffect(() => {
+        skillRef.current = activateSkill;
+    });
+
     function addKill() {
         streakRef.current += 1;
         bestStreakRef.current = Math.max(bestStreakRef.current, streakRef.current);
         setStreak(streakRef.current);
         const s = streakRef.current;
+        if (s % RECHARGE_EVERY === 0) rechargeSkill();
         if (s >= STREAK_START && s % 5 === 0) {
             sfx.streak(s / 5);
             toast({
@@ -746,6 +670,11 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
 
     useEffect(() => {
         const onKey = (e) => {
+            if (SKILL_KEYS[e.key]) {
+                e.preventDefault();
+                skillRef.current(SKILL_KEYS[e.key]);
+                return;
+            }
             if (e.key !== 'Escape') return;
             e.preventDefault();
             toggleRef.current();
@@ -799,6 +728,13 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                         <span className="opacity-50">KILLS</span>
                         <span className="font-bold tabular-nums" style={{ color }}>{defeated}</span>
                     </span>
+                    {round && (
+                        <span className="hidden lg:flex items-baseline gap-1.5">
+                            <span className="opacity-50">ROUND</span>
+                            <span className="font-bold tabular-nums">{round.index + 1}/{round.total}</span>
+                            <span style={{ color }}>{round.info.label}</span>
+                        </span>
+                    )}
                     {streak >= STREAK_START && (
                         <span className="tc-streak-pill shrink-0" key={streak}>
                             🔥 ×{streak}<span className="hidden sm:inline opacity-70"> · 2× PTS</span>
@@ -886,6 +822,17 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
 
                 {hitFlash > 0 && <div key={hitFlash} className="tc-hit-flash" />}
 
+                {effects.freeze > 0 && <div className="tc-fx tc-fx-freeze" />}
+                {effects.slowmo > 0 && effects.freeze <= 0 && <div className="tc-fx tc-fx-slowmo" />}
+
+                {round && (
+                    <div key={round.index} className="tc-round-banner">
+                        <span className="tc-round-num">ROUND {round.index + 1} OF {round.total}</span>
+                        <strong style={{ color }}>{round.info.label}</strong>
+                        <span className="tc-round-hint">{round.info.hint}</span>
+                    </div>
+                )}
+
                 <div
                     className="absolute"
                     style={{
@@ -896,6 +843,8 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                         zIndex:     15,
                     }}
                 >
+                    {effects.shield > 0 && <span className="tc-shield" />}
+                    {shieldHit > 0 && <span key={shieldHit} className="tc-shield-pop" />}
                     <svg width="42" height="48" viewBox="0 0 42 48" fill="none">
                         <ellipse cx="21" cy="45" rx="7" ry="3.5" fill={color} opacity="0.28"/>
                         <path d="M21 2 L37 36 L21 30 L5 36 Z" fill={color} opacity="0.92"/>
@@ -925,6 +874,13 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                         >
                             ▶ RESUME
                         </button>
+                        <div className="tc-skill-legend">
+                            {SKILL_ORDER.map((key) => (
+                                <span key={key}>
+                                    <kbd>{SKILLS[key].hint}</kbd> {SKILLS[key].icon} {SKILLS[key].name}: {SKILLS[key].text.toLowerCase()}
+                                </span>
+                            ))}
+                        </div>
                         <button
                             onClick={toggleMute}
                             className="font-mono text-xs tracking-widest px-8 py-2.5 rounded"
@@ -965,8 +921,32 @@ export default function TypingGame({ mode, playStyle, onGameOver, onExit }) {
                     autoCapitalize="none"
                     spellCheck={false}
                 />
+                <div className="flex items-center gap-1.5 shrink-0">
+                    {SKILL_ORDER.map((key) => {
+                        const skill = SKILLS[key];
+                        const active = effects[key] > 0;
+                        const left = charges[key];
+                        return (
+                            <button
+                                key={key}
+                                type="button"
+                                onPointerDown={(e) => e.preventDefault()}
+                                onClick={() => activateSkill(key)}
+                                disabled={paused}
+                                title={`${skill.name} (${skill.hint}): ${skill.text}`}
+                                aria-label={`${skill.name}, ${left} left`}
+                                className={`tc-skill ${active ? 'is-active' : ''} ${!active && left <= 0 ? 'is-empty' : ''}`}
+                                style={{ '--skill': skill.color }}
+                            >
+                                <span aria-hidden="true">{skill.icon}</span>
+                                <span className="tc-skill-count">{active ? `${Math.ceil(effects[key] / 1000)}s` : left}</span>
+                                <kbd className="hidden lg:inline">{skill.hint}</kbd>
+                            </button>
+                        );
+                    })}
+                </div>
                 <div
-                    className="hidden md:flex items-center gap-3 text-[10px] tracking-widest shrink-0"
+                    className="hidden xl:flex items-center gap-3 text-[10px] tracking-widest shrink-0"
                     style={{ color: 'rgba(255,255,255,0.3)' }}
                 >
                     <span style={{ color }}>{mode}</span>

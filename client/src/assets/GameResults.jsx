@@ -117,6 +117,12 @@ export default function GameResults({ stats, save, signedIn, onRetry, onBackToSe
                 <div className="font-mono text-[11px] tracking-widest mb-3" style={{ color: 'var(--text-faint)' }}>
                     <span style={{ color }}>{mode}</span>
                     <span> · </span>
+                    {stats.category && (
+                        <>
+                            <span>{stats.category.toUpperCase()}</span>
+                            <span> · </span>
+                        </>
+                    )}
                     <span style={{ color: playStyle === 'ranked' ? '#eab308' : 'var(--accent)' }}>
                         {playStyle === 'ranked' ? 'RANKED' : 'PRACTICE'}
                     </span>

@@ -8,6 +8,7 @@ import Welcome from './assets/Welcome.jsx'
 import Home from './assets/home.jsx'
 import ModeSelect from './assets/ModeSelect.jsx'
 import PreLaunch from './assets/PreLaunch.jsx'
+import { categoriesFor } from './assets/snippets.js'
 import TypingGame from './assets/TypingGame.jsx'
 import GameResults from './assets/GameResults.jsx'
 import Contact from './assets/contact.jsx'
@@ -40,6 +41,26 @@ function readCachedUser() {
   }
 }
 
+const DEFAULT_SETUP = { category: 'mixed', roundSeconds: 30 };
+
+function readSetup() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('typec_setup'));
+    if (saved && [15, 30].includes(saved.roundSeconds) && typeof saved.category === 'string') return saved;
+  } catch {
+    return DEFAULT_SETUP;
+  }
+  return DEFAULT_SETUP;
+}
+
+function saveSetup(setup) {
+  try {
+    localStorage.setItem('typec_setup', JSON.stringify(setup));
+  } catch {
+    return;
+  }
+}
+
 function cacheUser(user) {
   try {
     if (user) localStorage.setItem('typec_user', JSON.stringify(user));
@@ -69,6 +90,7 @@ export default function App() {
 
   const [selectedMode,      setSelectedMode]      = useState(null);
   const [selectedPlayStyle, setSelectedPlayStyle] = useState(null);
+  const [setup,             setSetupState]        = useState(readSetup);
   const [gameStats,         setGameStats]         = useState(null);
   const [saveState,         setSaveState]         = useState({ status: 'idle' });
   const [viewedPlayer,      setViewedPlayer]      = useState(() => readSession('typec_player'));
@@ -154,6 +176,13 @@ export default function App() {
     navigate('modeselect');
   };
 
+  const setSetup = (next) => {
+    setSetupState(next);
+    saveSetup(next);
+  };
+
+  const category = selectedMode && categoriesFor(selectedMode).some((c) => c.key === setup.category) ? setup.category : 'mixed';
+
   const handlePlayStyleSelect = (style) => {
     setSelectedPlayStyle(style);
     navigate('prelaunch');
@@ -230,7 +259,7 @@ export default function App() {
   const isGame = view === 'game';
 
   return (
-    <div className="min-h-screen flex flex-col font-sans">
+    <div className="tc-app min-h-screen flex flex-col font-sans">
       {!isGame && (
         <Header
           user={user}
@@ -277,6 +306,9 @@ export default function App() {
           <ModeSelect
             mode={selectedMode}
             signedIn={signedIn}
+            category={category}
+            roundSeconds={setup.roundSeconds}
+            onSetup={(next) => setSetup({ ...setup, ...next })}
             onSelect={handlePlayStyleSelect}
             onBack={() => navigate('home')}
           />
@@ -295,6 +327,8 @@ export default function App() {
           <TypingGame
             mode={selectedMode}
             playStyle={selectedPlayStyle}
+            category={category}
+            roundSeconds={setup.roundSeconds}
             onGameOver={handleGameOver}
             onExit={() => navigate('home')}
           />

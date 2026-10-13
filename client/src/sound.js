@@ -193,6 +193,29 @@ export const sfx = {
     tone({ type: "triangle", from: 2093, at: 0.34, decay: 0.6, peak: 0.08 });
   },
 
+  skill(kind) {
+    if (!audio()) return;
+    if (kind === "shield") {
+      [392, 523, 659].forEach((freq, i) => tone({ type: "sine", from: freq, at: i * 0.05, decay: 0.3, peak: 0.16 }));
+    } else if (kind === "freeze") {
+      tone({ type: "triangle", from: 1800, to: 600, decay: 0.45, peak: 0.14 });
+      burst({ at: 0.02, decay: 0.5, peak: 0.12, from: 6000, to: 1500, type: "highpass" });
+    } else {
+      tone({ type: "sine", from: 700, to: 180, decay: 0.7, peak: 0.18 });
+    }
+  },
+
+  shieldBreak() {
+    if (!audio()) return;
+    tone({ type: "triangle", from: 880, to: 220, decay: 0.3, peak: 0.18 });
+    burst({ decay: 0.3, peak: 0.25, from: 4000, to: 400, type: "bandpass" });
+  },
+
+  round() {
+    if (!audio()) return;
+    [660, 880].forEach((freq, i) => tone({ type: "triangle", from: freq, at: i * 0.09, decay: 0.15, peak: 0.12 }));
+  },
+
   click() {
     if (!audio()) return;
     tone({ type: "sine", from: 900, to: 700, decay: 0.05, peak: 0.08 });
